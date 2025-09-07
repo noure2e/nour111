@@ -2,33 +2,72 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>موقعي في الفسقفتسقلىلاسضاء الساحر</title>
-    <title>موقعي في الفضااااااااااااء الساحر</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فضائي الساحر 2100</title>
     <style>
         body {
             margin: 0;
             height: 100vh;
             overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, #0a0f2f, #000);
+            background: linear-gradient(45deg, #0a0f2f, #1a0040, #000);
+            font-family: 'Orbitron', sans-serif; /* خط مستقبلي */
+            color: #00ffcc; /* لون نيون سماوي */
+            perspective: 1000px;
         }
-        /* نجوم متحركة */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+        .navbar {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 20px #00ffcc;
+        }
+        .navbar a {
+            color: #00ffcc;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #ff00ff; /* لون نيون وردي عند التحويل */
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        .content {
+            text-align: center;
+            padding-top: 10%;
+            animation: float 4s infinite ease-in-out;
+            text-shadow: 0 0 15px #00ffcc;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 18px;
+        }
         .star {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
+            width: 3px;
+            height: 3px;
+            background: #00ffcc;
             border-radius: 50%;
-            animation: twinkle 5s infinite;
+            animation: twinkle 3s infinite, orbit 10s infinite linear;
         }
         @keyframes twinkle {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
+        }
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(50px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
         }
     </style>
     <script>
         window.onload = function() {
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 200; i++) {
                 let star = document.createElement("div");
                 star.className = "star";
                 star.style.left = Math.random() * 100 + "vw";
@@ -40,7 +79,18 @@
     </script>
 </head>
 <body>
-    <h1 style="color: white; text-align: center; padding-top: 20%; text-shadow: 0 0 10px #fff;">مرحبًا بكككك في فضائي الساحر!</h1>
-     <h1 style="color: white; text-align: center; padding-top: 20%; text-shadow: 0 0 10px #fff;">متستتتتتت تستتتت تستستتتتستستست!</h1>
+    <div class="navbar">
+        <a href="#home">الرئيسية</a>
+        <a href="#about">عني</a>
+        <a href="#contact">تواصل</a>
+    </div>
+    <div class="content">
+        <h1>فضائي الساحر 2100</h1>
+        <p>مرحبًا بك في عالم المستقبل!</p>
+    </div>
+    <div class="info">
+        <p>اسمي: نور الدين</p>
+        <p>للتواصل: <a href="https://instagram.com/nour_e2e" target="_blank" style="color: #ff00ff;">@nour_e2e</a></p>
+    </div>
 </body>
 </html>
