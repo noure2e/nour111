@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>موقعي في الفضاء الساحر</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #0a0f2f, #000);
+        }
+        /* نجوم متحركة */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            for (let i = 0; i < 100; i++) {
+                let star = document.createElement("div");
+                star.className = "star";
+                star.style.left = Math.random() * 100 + "vw";
+                star.style.top = Math.random() * 100 + "vh";
+                star.style.animationDelay = Math.random() * 5 + "s";
+                document.body.appendChild(star);
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1 style="color: white; text-align: center; padding-top: 20%; text-shadow: 0 0 10px #fff;">مرحبًا بك في فضائي الساحر!</h1>
+</body>
+</html>
