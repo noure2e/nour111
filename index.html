@@ -7,12 +7,12 @@
     <style>
         body {
             margin: 0;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh; /* تغيير إلى min-height للسماح بالتمرير */
             background: linear-gradient(45deg, #0a0f2f, #1a0040, #000);
             font-family: 'Orbitron', sans-serif; /* خط مستقبلي */
             color: #00ffcc; /* لون نيون سماوي */
             perspective: 1000px;
+            overflow-x: hidden; /* إخفاء التمرير الأفقي فقط */
         }
         @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
         .navbar {
@@ -20,6 +20,9 @@
             padding: 1.5rem;
             text-align: center;
             box-shadow: 0 0 20px #00ffcc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         .navbar a {
             color: #00ffcc;
@@ -34,7 +37,7 @@
         }
         .content {
             text-align: center;
-            padding-top: 10%;
+            padding: 10% 5%; /* إضافة هوامش للتمرير */
             animation: float 4s infinite ease-in-out;
             text-shadow: 0 0 15px #00ffcc;
         }
@@ -44,13 +47,15 @@
             100% { transform: translateY(0); }
         }
         .info {
-            margin-top: 20px;
+            margin: 50px 0; /* زيادة المسافة */
             font-size: 18px;
             text-align: center;
+            padding: 0 5%;
         }
         .image-section {
             text-align: center;
-            margin-top: 30px;
+            margin: 50px 0; /* زيادة المسافة */
+            padding: 0 5%;
             animation: glow 2s infinite alternate;
         }
         @keyframes glow {
@@ -62,8 +67,8 @@
             text-shadow: 0 0 10px #ff00ff;
         }
         .image-section img {
-            width: 300px;
-            height: auto;
+            max-width: 100%; /* للتناسب مع الشاشة */
+            height: auto; /* الحفاظ على النسبة */
             border: 3px solid #00ffcc;
             border-radius: 10px;
             box-shadow: 0 0 20px #00ffcc;
@@ -73,7 +78,7 @@
             transform: scale(1.05);
         }
         .star {
-            position: absolute;
+            position: fixed; /* تغيير إلى fixed للنجوم تتحرك مع التمرير */
             width: 3px;
             height: 3px;
             background: #00ffcc;
