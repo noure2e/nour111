@@ -1,194 +1,434 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فضائي الساحر 2100</title>
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(45deg, #0a0f2f, #1a0040, #000);
-            font-family: 'Orbitron', sans-serif;
-            color: #00ffcc;
-            perspective: 1000px;
-            overflow-x: hidden;
-        }
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
-        .navbar {
-            background: rgba(0, 0, 0, 0.9);
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 0 20px #00ffcc;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .navbar a {
-            color: #00ffcc;
-            text-decoration: none;
-            margin: 0 20px;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-        .navbar a:hover {
-            color: #ff00ff;
-            text-shadow: 0 0 10px #ff00ff;
-        }
-        .content {
-            text-align: center;
-            padding: 10% 5%;
-            animation: float 4s infinite ease-in-out;
-            text-shadow: 0 0 15px #00ffcc;
-        }
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
-        }
-        .info {
-            margin: 50px 0;
-            font-size: 18px;
-            text-align: center;
-            padding: 0 5%;
-        }
-        .image-section {
-            text-align: center;
-            margin: 50px 0;
-            padding: 0 5%;
-            animation: glow 2s infinite alternate;
-        }
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px #00ffcc; }
-            100% { box-shadow: 0 0 30px #ff00ff; }
-        }
-        .image-section h2 {
-            color: #ff00ff;
-            text-shadow: 0 0 10px #ff00ff;
-        }
-        .image-section img {
-            max-width: 100%;
-            height: auto;
-            border: 3px solid #00ffcc;
-            border-radius: 10px;
-            box-shadow: 0 0 20px #00ffcc;
-            transition: transform 0.3s;
-        }
-        .image-section img:hover {
-            transform: scale(1.05);
-        }
-        .articles-section {
-            text-align: center;
-            margin: 50px 0;
-            padding: 0 5%;
-        }
-        .articles-section h2 {
-            color: #ff00ff;
-            text-shadow: 0 0 10px #ff00ff;
-            margin-bottom: 30px;
-        }
-        .article {
-            background: rgba(0, 0, 0, 0.7);
-            margin: 20px auto;
-            padding: 20px;
-            max-width: 600px;
-            border: 2px solid #00ffcc;
-            border-radius: 10px;
-            box-shadow: 0 0 15px #00ffcc;
-            transition: box-shadow 0.3s;
-        }
-        .article:hover {
-            box-shadow: 0 0 25px #ff00ff;
-        }
-        .article h3 {
-            color: #00ffcc;
-            margin-bottom: 10px;
-        }
-        .article p {
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .article a {
-            color: #ff00ff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .article a:hover {
-            text-shadow: 0 0 5px #ff00ff;
-        }
-        .star {
-            position: fixed;
-            width: 3px;
-            height: 3px;
-            background: #00ffcc;
-            border-radius: 50%;
-            animation: twinkle 3s infinite, orbit 10s infinite linear;
-        }
-        @keyframes twinkle {
-            0% { opacity: 0.4; }
-            50% { opacity: 0.8; }
-            100% { opacity: 0.4; }
-        }
-        @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(50px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
-        }
-    </style>
-    <script>
-        window.onload = function() {
-            for (let i = 0; i < 200; i++) {
-                let star = document.createElement("div");
-                star.className = "star";
-                star.style.left = Math.random() * 100 + "vw";
-                star.style.top = Math.random() * 100 + "vh";
-                star.style.animationDelay = Math.random() * 5 + "s";
-                document.body.appendChild(star);
-            }
-        };
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تويتر المستقبل</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color: #e0e0e0;
+    direction: rtl;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    color: #00e5ff;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 1000;
+    text-shadow: 0 0 10px #00e5ff;
+  }
+  .container {
+    display: flex;
+    max-width: 1200px;
+    margin: 100px auto 20px auto;
+    gap: 20px;
+  }
+  .sidebar {
+    width: 25%;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,229,255,0.2);
+    height: fit-content;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  .sidebar ul li {
+    margin: 15px 0;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .sidebar ul li:hover {
+    color: #00e5ff;
+    text-shadow: 0 0 5px #00e5ff;
+  }
+  .trending h4 {
+    margin-bottom: 10px;
+    color: #00e5ff;
+  }
+  .trending p {
+    margin: 5px 0;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .trending p:hover {
+    color: #00e5ff;
+    text-shadow: 0 0 5px #00e5ff;
+  }
+  .feed {
+    width: 50%;
+  }
+  .new-tweet {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(0,229,255,0.2);
+  }
+  .new-tweet textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: #e0e0e0;
+    resize: none;
+    font-size: 14px;
+    outline: none;
+  }
+  .new-tweet button {
+    margin-top: 10px;
+    background: #00e5ff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    float: left;
+    transition: box-shadow 0.3s;
+  }
+  .new-tweet button:hover {
+    box-shadow: 0 0 15px #00e5ff;
+  }
+  .tweet {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s;
+    box-shadow: 0 0 10px rgba(0,229,255,0.1);
+  }
+  .tweet:hover {
+    background: rgba(255,255,255,0.08);
+  }
+  .tweet-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  .tweet-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #00e5ff;
+  }
+  .tweet-header h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+  .tweet-header span {
+    color: #aaa;
+    font-size: 14px;
+    margin-right: 5px;
+  }
+  .tweet p {
+    margin: 10px 0 10px 0;
+    font-size: 15px;
+  }
+  .tweet-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    color: #888;
+    font-size: 14px;
+  }
+  .tweet-actions span {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.3s, text-shadow 0.3s;
+    gap: 5px;
+  }
+  .tweet-actions span:hover {
+    color: #00e5ff;
+    text-shadow: 0 0 5px #00e5ff;
+  }
+  .count {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .score {
+    font-size: 12px;
+    color: #00e5ff;
+    margin-bottom: 5px;
+  }
+  /* التعليقات */
+  .comments {
+    margin-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 10px;
+  }
+  .comments div {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #ccc;
+  }
+  .comment-box {
+    margin-top: 10px;
+  }
+  .comment-box input {
+    width: 80%;
+    padding: 5px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.1);
+    color: #e0e0e0;
+  }
+  .comment-box button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 8px;
+    background: #00e5ff;
+    color: #000;
+    cursor: pointer;
+  }
+  /* modal الملف الشخصي */
+  .profile-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  .profile-content {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0 0 15px rgba(0,229,255,0.2);
+  }
+  .profile-content img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #00e5ff;
+  }
+  .profile-content h2 {
+    margin: 10px 0 5px 0;
+    color: #00e5ff;
+  }
+  .profile-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+  }
+  .profile-stats div {
+    text-align: center;
+  }
+  .close-btn {
+    margin-top: 15px;
+    background: #00e5ff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    color: #000;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="#home">الرئيسية</a>
-        <a href="#about">عني</a>
-        <a href="#articles">المقالات</a>
-        <a href="#contact">تواصل</a>
+  <header>🚀 تويتر المستقبل 🚀</header>
+
+  <div class="container">
+    <div class="sidebar">
+      <ul>
+        <li>الصفحة الرئيسية</li>
+        <li>الإشعارات</li>
+        <li>الرسائل</li>
+        <li>الملف الشخصي</li>
+      </ul>
+
+      <div class="trending">
+        <h4>الشائع الآن</h4>
+        <p>#تكنولوجيا</p>
+        <p>#ذكاء_اصطناعي</p>
+        <p>#فضاء</p>
+      </div>
     </div>
-    <div class="content">
-        <h1>فضائي الساحر 2100</h1>
-        <p>مرحبًا بك في عالم المستقبل!</p>
-    </div>
-    <div class="info">
-        <p>اسمي: نور الدين</p>
-        <p>للتواصل: <a href="https://instagram.com/nour_e2e" target="_blank" style="color: #ff00ff;">@nour_e2e</a></p>
-    </div>
-    <div class="image-section">
-        <h2>صورة نور الدين</h2>
-        <img src="my-image.jpg" alt="صورة شخصية" />
-    </div>
-    <div class="articles-section" id="articles">
-        <h2>المقالات</h2>
-        <div class="article">
-            <h3>تكنولوجيا الفضاء وخطة الأمم المتحدة لعام 2030</h3>
-            <p>منذ إطلاق سبوتنيك 1 في 1957، أصبحت الأمم المتحدة، عبر لجنة استخدام الفضاء الخارجي، مكانًا لمناقشة المشاريع الفضائية والقانون الدولي. اليوم، أكثر من 70 وكالة فضائية تعمل على توسيع المعرفة، مع تحديات جديدة من الجهات الفاعلة الجديدة والتكنولوجيات الحديثة.</p>
-            <a href="https://www.un.org/ar/59036" target="_blank">اقرأ المزيد</a><grok:render card_id="9340d8" card_type="citation_card" type="render_inline_citation">
-<argument name="citation_id">0</argument>
-</grok:render>
+
+    <div class="feed">
+      <div class="new-tweet">
+        <textarea id="tweetText" rows="3" placeholder="ما الذي يدور في بالك؟ 🚀"></textarea>
+        <button onclick="addTweet()">غرد</button>
+        <div style="clear: both;"></div>
+      </div>
+
+      <div id="tweets">
+        <!-- تغريدة نموذجية -->
+        <div class="tweet">
+          <div class="score">🔥 نقاط التفاعل: <span class="total-score">0</span></div>
+          <div class="tweet-header" onclick="openProfile('نورة','@noura','https://picsum.photos/seed/robot1/80')">
+            <img src="https://picsum.photos/seed/robot1/40" alt="Avatar">
+            <h3>نورة <span>@noura</span></h3>
+          </div>
+          <p>مرحبًا بكم في تويتر المستقبل ✨</p>
+          <div class="tweet-actions">
+            <span onclick="toggleCommentBox(this)">💬 تعليق <span class="count">0</span></span>
+            <span onclick="updateCount(this)">🔁 إعادة تغريد <span class="count">0</span></span>
+            <span onclick="toggleLike(this)">❤️ إعجاب <span class="count">0</span></span>
+            <span onclick="updateCount(this)">🔖 حفظ <span class="count">0</span></span>
+          </div>
+          <div class="comments"></div>
         </div>
-        <div class="article">
-            <h3>صناعة الفضاء: التحديات والفرص المستقبلية</h3>
-            <p>بدأت صناعة الفضاء مع سبوتنيك في 1957، وأصبحت اليوم تشمل الاتصالات، الطاقة، والنقل. التكنولوجيا الحديثة تعزز استكشاف الكواكب، وقد تكشف موارد جديدة لحل مشاكل ندرة الموارد على الأرض، مما يجعلها ضرورة لمستقبل البشرية.</p>
-            <a href="https://www.euspri2023.com/space-industry-how-technology-is-contributing-to-planetary-exploration/" target="_blank">اقرأ المزيد</a><grok:render card_id="765d64" card_type="citation_card" type="render_inline_citation">
-<argument name="citation_id">2</argument>
-</grok:render>
-        </div>
-        <div class="article">
-            <h3>مستقبل استكشاف الفضاء: من أوريون إلى جيمس ويب</h3>
-            <p>يشمل مستقبل الاستكشاف التلسكوبات مثل جيمس ويب (مرآة 6.5 متر)، ومهمات روبوتية مثل تشانغ آه 5 لجمع عينات قمرية، ومهمات مأهولة مثل أرتميس 2 حول القمر في 2022، ومهمات مارس للبحث عن حياة سابقة.</p>
-            <a href="https://ar.wikipedia.org/wiki/%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84_%D8%A7%D8%B3%D8%AA%D9%83%D8%B4%D8%A7%D9%81_%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A1" target="_blank">اقرأ المزيد</a><grok:render card_id="b3bc15" card_type="citation_card" type="render_inline_citation">
-<argument name="citation_id">3</argument>
-</grok:render>
-        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Modal الملف الشخصي -->
+  <div class="profile-modal" id="profileModal">
+    <div class="profile-content">
+      <img id="profileImg" src="" alt="Profile">
+      <h2 id="profileName"></h2>
+      <p id="profileHandle"></p>
+      <div class="profile-stats">
+        <div><strong id="tweetsCount">0</strong><br>تغريدات</div>
+        <div><strong id="followersCount">0</strong><br>متابعون</div>
+        <div><strong id="followingCount">0</strong><br>متابَعون</div>
+      </div>
+      <button class="close-btn" onclick="closeProfile()">إغلاق</button>
+    </div>
+  </div>
+
+<script>
+  const avatars = [
+    'https://picsum.photos/seed/robot1/40',
+    'https://picsum.photos/seed/robot2/40',
+    'https://picsum.photos/seed/robot3/40',
+    'https://picsum.photos/seed/robot4/40'
+  ];
+
+  function addTweet() {
+    const text = document.getElementById('tweetText').value.trim();
+    if(text==='') return;
+    const randomAvatar = avatars[Math.floor(Math.random()*avatars.length)];
+    const tweetsDiv = document.getElementById('tweets');
+
+    const tweetDiv = document.createElement('div');
+    tweetDiv.classList.add('tweet');
+    tweetDiv.innerHTML = `
+      <div class="score">🔥 نقاط التفاعل: <span class="total-score">0</span></div>
+      <div class="tweet-header" onclick="openProfile('أنت','@you','${randomAvatar.replace('/40','/80')}')">
+        <img src="${randomAvatar}" alt="Avatar">
+        <h3>أنت <span>@you</span></h3>
+      </div>
+      <p>${text}</p>
+      <div class="tweet-actions">
+        <span onclick="toggleCommentBox(this)">💬 تعليق <span class="count">0</span></span>
+        <span onclick="updateCount(this)">🔁 إعادة تغريد <span class="count">0</span></span>
+        <span onclick="toggleLike(this)">❤️ إعجاب <span class="count">0</span></span>
+        <span onclick="updateCount(this)">🔖 حفظ <span class="count">0</span></span>
+      </div>
+      <div class="comments"></div>
+    `;
+    tweetsDiv.prepend(tweetDiv);
+    document.getElementById('tweetText').value='';
+  }
+
+  function updateCount(el) {
+    let c = el.querySelector('.count');
+    c.textContent = parseInt(c.textContent)+1;
+    updateScore(el.closest('.tweet'));
+  }
+
+  function toggleLike(el) {
+    let c = el.querySelector('.count');
+    let count = parseInt(c.textContent);
+    if(el.classList.contains('liked')) {
+      el.classList.remove('liked');
+      count--;
+      el.style.color='#888';
+      el.style.textShadow='none';
+    } else {
+      el.classList.add('liked');
+      count++;
+      el.style.color='#ff1744';
+      el.style.textShadow='0 0 5px #ff1744';
+    }
+    c.textContent = count;
+    updateScore(el.closest('.tweet'));
+  }
+
+  function updateScore(tweet) {
+    let total=0;
+    tweet.querySelectorAll('.count').forEach(c=>total+=parseInt(c.textContent));
+    tweet.querySelector('.total-score').textContent=total;
+  }
+
+  // التعليقات
+  function toggleCommentBox(el) {
+    const tweet = el.closest('.tweet');
+    let commentBox = tweet.querySelector('.comment-box');
+    if(commentBox) {
+      commentBox.remove();
+    } else {
+      commentBox = document.createElement('div');
+      commentBox.classList.add('comment-box');
+      commentBox.innerHTML=`
+        <input type="text" placeholder="أضف تعليق...">
+        <button onclick="addComment(this)">إرسال</button>
+      `;
+      tweet.appendChild(commentBox);
+    }
+  }
+
+  function addComment(btn) {
+    const commentBox = btn.parentElement;
+    const input = commentBox.querySelector('input');
+    const text = input.value.trim();
+    if(text==='') return;
+    const tweet = btn.closest('.tweet');
+    const commentsDiv = tweet.querySelector('.comments');
+    const newComment = document.createElement('div');
+    newComment.textContent='💬 '+text;
+    commentsDiv.appendChild(newComment);
+    input.value='';
+    // زيادة عدد التعليقات
+    const commentSpan = tweet.querySelector('.tweet-actions span:first-child .count');
+    commentSpan.textContent=parseInt(commentSpan.textContent)+1;
+    updateScore(tweet);
+  }
+
+  // الملف الشخصي modal
+  function openProfile(name,handle,img) {
+    document.getElementById('profileName').textContent=name;
+    document.getElementById('profileHandle').textContent=handle;
+    document.getElementById('profileImg').src=img;
+    document.getElementById('tweetsCount').textContent=Math.floor(Math.random()*500);
+    document.getElementById('followersCount').textContent=Math.floor(Math.random()*1000);
+    document.getElementById('followingCount').textContent=Math.floor(Math.random()*800);
+    document.getElementById('profileModal').style.display='flex';
+  }
+
+  function closeProfile() {
+    document.getElementById('profileModal').style.display='none';
+  }
+</script>
 </body>
 </html>
