@@ -7,12 +7,12 @@
     <style>
         body {
             margin: 0;
-            min-height: 100vh; /* تغيير إلى min-height للسماح بالتمرير */
+            min-height: 100vh;
             background: linear-gradient(45deg, #0a0f2f, #1a0040, #000);
-            font-family: 'Orbitron', sans-serif; /* خط مستقبلي */
-            color: #00ffcc; /* لون نيون سماوي */
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffcc;
             perspective: 1000px;
-            overflow-x: hidden; /* إخفاء التمرير الأفقي فقط */
+            overflow-x: hidden;
         }
         @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
         .navbar {
@@ -32,12 +32,12 @@
             transition: color 0.3s;
         }
         .navbar a:hover {
-            color: #ff00ff; /* لون نيون وردي عند التحويل */
+            color: #ff00ff;
             text-shadow: 0 0 10px #ff00ff;
         }
         .content {
             text-align: center;
-            padding: 10% 5%; /* إضافة هوامش للتمرير */
+            padding: 10% 5%;
             animation: float 4s infinite ease-in-out;
             text-shadow: 0 0 15px #00ffcc;
         }
@@ -47,14 +47,14 @@
             100% { transform: translateY(0); }
         }
         .info {
-            margin: 50px 0; /* زيادة المسافة */
+            margin: 50px 0;
             font-size: 18px;
             text-align: center;
             padding: 0 5%;
         }
         .image-section {
             text-align: center;
-            margin: 50px 0; /* زيادة المسافة */
+            margin: 50px 0;
             padding: 0 5%;
             animation: glow 2s infinite alternate;
         }
@@ -67,8 +67,8 @@
             text-shadow: 0 0 10px #ff00ff;
         }
         .image-section img {
-            max-width: 100%; /* للتناسب مع الشاشة */
-            height: auto; /* الحفاظ على النسبة */
+            max-width: 100%;
+            height: auto;
             border: 3px solid #00ffcc;
             border-radius: 10px;
             box-shadow: 0 0 20px #00ffcc;
@@ -77,8 +77,47 @@
         .image-section img:hover {
             transform: scale(1.05);
         }
+        .articles-section {
+            text-align: center;
+            margin: 50px 0;
+            padding: 0 5%;
+        }
+        .articles-section h2 {
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+            margin-bottom: 30px;
+        }
+        .article {
+            background: rgba(0, 0, 0, 0.7);
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            border: 2px solid #00ffcc;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #00ffcc;
+            transition: box-shadow 0.3s;
+        }
+        .article:hover {
+            box-shadow: 0 0 25px #ff00ff;
+        }
+        .article h3 {
+            color: #00ffcc;
+            margin-bottom: 10px;
+        }
+        .article p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .article a {
+            color: #ff00ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .article a:hover {
+            text-shadow: 0 0 5px #ff00ff;
+        }
         .star {
-            position: fixed; /* تغيير إلى fixed للنجوم تتحرك مع التمرير */
+            position: fixed;
             width: 3px;
             height: 3px;
             background: #00ffcc;
@@ -112,6 +151,7 @@
     <div class="navbar">
         <a href="#home">الرئيسية</a>
         <a href="#about">عني</a>
+        <a href="#articles">المقالات</a>
         <a href="#contact">تواصل</a>
     </div>
     <div class="content">
@@ -124,7 +164,31 @@
     </div>
     <div class="image-section">
         <h2>صورة نور الدين</h2>
-        <img src="new.jpg" alt="صورة شخصية" />
+        <img src="my-image.jpg" alt="صورة شخصية" />
+    </div>
+    <div class="articles-section" id="articles">
+        <h2>المقالات</h2>
+        <div class="article">
+            <h3>تكنولوجيا الفضاء وخطة الأمم المتحدة لعام 2030</h3>
+            <p>منذ إطلاق سبوتنيك 1 في 1957، أصبحت الأمم المتحدة، عبر لجنة استخدام الفضاء الخارجي، مكانًا لمناقشة المشاريع الفضائية والقانون الدولي. اليوم، أكثر من 70 وكالة فضائية تعمل على توسيع المعرفة، مع تحديات جديدة من الجهات الفاعلة الجديدة والتكنولوجيات الحديثة.</p>
+            <a href="https://www.un.org/ar/59036" target="_blank">اقرأ المزيد</a><grok:render card_id="9340d8" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">0</argument>
+</grok:render>
+        </div>
+        <div class="article">
+            <h3>صناعة الفضاء: التحديات والفرص المستقبلية</h3>
+            <p>بدأت صناعة الفضاء مع سبوتنيك في 1957، وأصبحت اليوم تشمل الاتصالات، الطاقة، والنقل. التكنولوجيا الحديثة تعزز استكشاف الكواكب، وقد تكشف موارد جديدة لحل مشاكل ندرة الموارد على الأرض، مما يجعلها ضرورة لمستقبل البشرية.</p>
+            <a href="https://www.euspri2023.com/space-industry-how-technology-is-contributing-to-planetary-exploration/" target="_blank">اقرأ المزيد</a><grok:render card_id="765d64" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">2</argument>
+</grok:render>
+        </div>
+        <div class="article">
+            <h3>مستقبل استكشاف الفضاء: من أوريون إلى جيمس ويب</h3>
+            <p>يشمل مستقبل الاستكشاف التلسكوبات مثل جيمس ويب (مرآة 6.5 متر)، ومهمات روبوتية مثل تشانغ آه 5 لجمع عينات قمرية، ومهمات مأهولة مثل أرتميس 2 حول القمر في 2022، ومهمات مارس للبحث عن حياة سابقة.</p>
+            <a href="https://ar.wikipedia.org/wiki/%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84_%D8%A7%D8%B3%D8%AA%D9%83%D8%B4%D8%A7%D9%81_%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A1" target="_blank">اقرأ المزيد</a><grok:render card_id="b3bc15" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">3</argument>
+</grok:render>
+        </div>
     </div>
 </body>
 </html>
