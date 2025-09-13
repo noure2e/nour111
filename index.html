@@ -46,6 +46,31 @@
         .info {
             margin-top: 20px;
             font-size: 18px;
+            text-align: center;
+        }
+        .image-section {
+            text-align: center;
+            margin-top: 30px;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px #00ffcc; }
+            100% { box-shadow: 0 0 30px #ff00ff; }
+        }
+        .image-section h2 {
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        .image-section img {
+            width: 300px;
+            height: auto;
+            border: 3px solid #00ffcc;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #00ffcc;
+            transition: transform 0.3s;
+        }
+        .image-section img:hover {
+            transform: scale(1.05);
         }
         .star {
             position: absolute;
@@ -91,6 +116,10 @@
     <div class="info">
         <p>اسمي: نور الدين</p>
         <p>للتواصل: <a href="https://instagram.com/nour_e2e" target="_blank" style="color: #ff00ff;">@nour_e2e</a></p>
+    </div>
+    <div class="image-section">
+        <h2>صورة نور الدين</h2>
+        <img src="my-image.jpg" alt="صورة شخصية" />
     </div>
 </body>
 </html>
