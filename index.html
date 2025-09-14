@@ -5,27 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Future Twitter</title>
 <style>
-  body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-  header { text-align: center; padding: 20px; font-size: 2rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
-  .tweet-box { display: flex; justify-content: center; padding: 20px; }
-  .tweet-box textarea { width: 60%; padding: 10px; border-radius: 10px; border: none; resize: none; font-size: 1rem; }
-  .tweet-box button { padding: 10px 20px; margin-left: 10px; background: #1da1f2; border: none; border-radius: 10px; cursor: pointer; color: #fff; font-size: 1rem; }
-  #tweets { max-width: 700px; margin: 0 auto; padding: 20px; }
-  .tweet { background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); margin-bottom: 20px; padding: 15px; border-radius: 15px; }
-  .tweet-header { display: flex; align-items: center; margin-bottom: 10px; cursor:pointer; }
-  .tweet-header img { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; }
-  .tweet-header h3 { margin: 0; font-size: 1.2rem; }
-  .tweet-actions { display: flex; justify-content: space-around; margin-top: 10px; font-size: 0.9rem; }
-  .tweet-actions span { cursor: pointer; }
-  #profile { max-width: 500px; margin: 20px auto; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; display: none; }
-  #profile img { width: 80px; height: 80px; border-radius: 50%; }
-  #profile button { margin-top: 10px; padding: 5px 10px; background:#1da1f2; border:none; border-radius:5px; cursor:pointer; }
+  body { background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); color:#fff; font-family: Arial,sans-serif; margin:0; padding:0; }
+  header { text-align:center; padding:20px; font-size:2rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);}
+  .tweet-box { display:flex; justify-content:center; padding:20px; }
+  .tweet-box textarea { width:60%; padding:10px; border-radius:10px; border:none; resize:none; font-size:1rem; }
+  .tweet-box button { padding:10px 20px; margin-left:10px; background:#1da1f2; border:none; border-radius:10px; cursor:pointer; color:#fff; font-size:1rem; }
+  #tweets { max-width:700px; margin:0 auto; padding:20px; }
+  .tweet { background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); margin-bottom:20px; padding:15px; border-radius:15px; }
+  .tweet-header { display:flex; align-items:center; margin-bottom:10px; cursor:pointer; }
+  .tweet-header img { width:50px; height:50px; border-radius:50%; margin-right:10px; }
+  .tweet-header h3 { margin:0; font-size:1.2rem; }
+  .tweet-actions { display:flex; justify-content:space-around; margin-top:10px; font-size:0.9rem; }
+  .tweet-actions span { cursor:pointer; }
+  #profile { max-width:500px; margin:20px auto; background: rgba(255,255,255,0.1); padding:20px; border-radius:15px; display:none; }
+  #profile img { width:80px; height:80px; border-radius:50%; }
+  #profile button { margin-top:10px; padding:5px 10px; background:#1da1f2; border:none; border-radius:5px; cursor:pointer; }
+  #loginBtn, #logoutBtn { display:block; margin:20px auto; padding:10px 20px; font-size:1rem; border:none; border-radius:10px; cursor:pointer; background:#1da1f2; color:#fff; }
 </style>
 </head>
 <body>
 <header>🚀 Future Twitter</header>
 
-<div class="tweet-box">
+<button id="loginBtn" onclick="signIn()">تسجيل الدخول بـ Google</button>
+<button id="logoutBtn" onclick="signOut()" style="display:none;">تسجيل الخروج</button>
+
+<div class="tweet-box" style="display:none;">
   <textarea id="tweetText" rows="3" placeholder="ماذا يحدث؟"></textarea>
   <button onclick="addTweet()">نشر</button>
 </div>
@@ -41,13 +45,11 @@
   <button id="followBtn" onclick="toggleFollow()">متابعة</button>
 </div>
 
-<!-- Firebase App + Firestore + Auth (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
 <script>
-  // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
     authDomain: "future-twitter.firebaseapp.com",
@@ -58,13 +60,13 @@
     measurementId: "G-V0MS908RXJ"
   };
 
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
   const auth = firebase.auth();
   const tweetsContainer = document.getElementById('tweets');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-  // تسجيل الدخول بـ Google
   async function signIn() {
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
@@ -75,18 +77,20 @@
   }
 
   auth.onAuthStateChanged(user => {
-    if(user) {
+    if(user){
       document.querySelector('.tweet-box').style.display = 'flex';
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'block';
     } else {
       document.querySelector('.tweet-box').style.display = 'none';
-      tweetsContainer.innerHTML = '<p style="text-align:center;">يرجى تسجيل الدخول أولاً.</p>';
+      loginBtn.style.display = 'block';
+      logoutBtn.style.display = 'none';
     }
   });
 
-  // إضافة تغريدة
-  async function addTweet() {
+  async function addTweet(){
     const tweetText = document.getElementById('tweetText').value.trim();
-    if(tweetText === '') return;
+    if(!tweetText) return;
     const user = auth.currentUser;
     if(!user) return alert('يجب تسجيل الدخول أولاً');
 
@@ -99,11 +103,10 @@
     });
 
     const userRef = db.collection('users').doc(user.uid);
-    userRef.update({ tweetCount: firebase.firestore.FieldValue.increment(1) });
+    userRef.set({ tweetCount: firebase.firestore.FieldValue.increment(1) }, { merge:true });
     document.getElementById('tweetText').value = '';
   }
 
-  // عرض التغريدات العامة
   db.collection('tweets').orderBy('time','desc').onSnapshot(snapshot => {
     tweetsContainer.innerHTML = '';
     snapshot.forEach(doc => {
@@ -127,58 +130,23 @@
     });
   });
 
-  // ملف شخصي
-  async function loadProfile(uid) {
-    const profileDiv = document.getElementById('profile');
-    const profileImg = document.getElementById('profileImg');
-    const profileName = document.getElementById('profileName');
-    const tweetCountEl = document.getElementById('tweetCount');
-    const followersCountEl = document.getElementById('followersCount');
-    const followingCountEl = document.getElementById('followingCount');
-    const followBtn = document.getElementById('followBtn');
-
-    const userDoc = await db.collection('users').doc(uid).get();
-    if(!userDoc.exists) {
-      await db.collection('users').doc(uid).set({
-        tweetCount: 0,
-        followersCount: Math.floor(Math.random()*1000),
-        followingCount: Math.floor(Math.random()*300),
-        followers: [],
-        following: []
-      });
+  async function loadProfile(uid){
+    const userRef = db.collection('users').doc(uid);
+    const docSnap = await userRef.get();
+    if(!docSnap.exists){
+      await userRef.set({ tweetCount:0, followers:0, following:0 });
     }
-    const data = (await db.collection('users').doc(uid).get()).data();
+    const userData = (await userRef.get()).data();
+    document.getElementById('profileImg').src = auth.currentUser.photoURL;
+    document.getElementById('profileName').innerText = auth.currentUser.displayName;
+    document.getElementById('tweetCount').innerText = userData.tweetCount || 0;
+    document.getElementById('followersCount').innerText = userData.followers || 0;
+    document.getElementById('followingCount').innerText = userData.following || 0;
+    document.getElementById('profile').style.display='block';
+  }
 
-    profileImg.src = data.photoURL || 'https://i.pravatar.cc/80';
-    profileName.textContent = data.displayName || 'مستخدم';
-    tweetCountEl.textContent = data.tweetCount || 0;
-    followersCountEl.textContent = data.followersCount || 0;
-    followingCountEl.textContent = data.followingCount || 0;
-
-    // تحديث زر متابعة/إلغاء
-    const currentUser = auth.currentUser;
-    if(currentUser && currentUser.uid !== uid) {
-      followBtn.style.display = 'block';
-      followBtn.textContent = (data.followers && data.followers.includes(currentUser.uid)) ? 'إلغاء متابعة' : 'متابعة';
-      followBtn.onclick = async () => {
-        const userRef = db.collection('users').doc(uid);
-        const currentRef = db.collection('users').doc(currentUser.uid);
-
-        if(data.followers && data.followers.includes(currentUser.uid)) {
-          await userRef.update({ followers: firebase.firestore.FieldValue.arrayRemove(currentUser.uid), followersCount: firebase.firestore.FieldValue.increment(-1) });
-          await currentRef.update({ following: firebase.firestore.FieldValue.arrayRemove(uid), followingCount: firebase.firestore.FieldValue.increment(-1) });
-          followBtn.textContent = 'متابعة';
-        } else {
-          await userRef.update({ followers: firebase.firestore.FieldValue.arrayUnion(currentUser.uid), followersCount: firebase.firestore.FieldValue.increment(1) });
-          await currentRef.update({ following: firebase.firestore.FieldValue.arrayUnion(uid), followingCount: firebase.firestore.FieldValue.increment(1) });
-          followBtn.textContent = 'إلغاء متابعة';
-        }
-      };
-    } else {
-      followBtn.style.display = 'none';
-    }
-
-    profileDiv.style.display = 'block';
+  function toggleFollow(){
+    alert('ميزة المتابعة غير مفعلة الآن، يمكن إضافتها لاحقًا.');
   }
 </script>
 </body>
