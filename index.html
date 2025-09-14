@@ -123,28 +123,30 @@
       document.getElementById('tweetText').value = '';
     }
 
-    // قراءة التغريدات في الوقت الفعلي
-    db.collection('tweets').orderBy('time','desc').onSnapshot(snapshot => {
-      const tweetContainer = document.getElementById('tweets');
-      tweetContainer.innerHTML = '';
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const tweetDiv = document.createElement('div');
-        tweetDiv.classList.add('tweet');
-        tweetDiv.innerHTML = `
-          <div class="tweet-header">
-            <img src="https://i.pravatar.cc/50?img=${Math.floor(Math.random()*70)}" alt="Avatar">
-            <h3>مستخدم <span>@user</span></h3>
-          </div>
-          <p>${data.text}</p>
-          <div class="tweet-actions">
-            <span>❤️ إعجاب</span>
-            <span>💬 تعليق</span>
-            <span>🔁 إعادة تغريد</span>
-            <span>🔖 حفظ</span>
-          </div>
-        `;
-        tweetContainer.appendChild(tweetDiv);
+    // قراءة التغريدات عند تحميل الصفحة وفي الوقت الفعلي
+    window.addEventListener('DOMContentLoaded', () => {
+      db.collection('tweets').orderBy('time','desc').onSnapshot(snapshot => {
+        const tweetContainer = document.getElementById('tweets');
+        tweetContainer.innerHTML = ''; // مسح التغريدات القديمة قبل عرض الجديدة
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const tweetDiv = document.createElement('div');
+          tweetDiv.classList.add('tweet');
+          tweetDiv.innerHTML = `
+            <div class="tweet-header">
+              <img src="https://i.pravatar.cc/50?img=${Math.floor(Math.random()*70)}" alt="Avatar">
+              <h3>مستخدم <span>@user</span></h3>
+            </div>
+            <p>${data.text}</p>
+            <div class="tweet-actions">
+              <span>❤️ إعجاب</span>
+              <span>💬 تعليق</span>
+              <span>🔁 إعادة تغريد</span>
+              <span>🔖 حفظ</span>
+            </div>
+          `;
+          tweetContainer.appendChild(tweetDiv);
+        });
       });
     });
   </script>
