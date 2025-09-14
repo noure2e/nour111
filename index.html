@@ -1,434 +1,152 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تويتر المستقبل</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-    color: #e0e0e0;
-    direction: rtl;
-  }
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(10px);
-    color: #00e5ff;
-    padding: 15px;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    z-index: 1000;
-    text-shadow: 0 0 10px #00e5ff;
-  }
-  .container {
-    display: flex;
-    max-width: 1200px;
-    margin: 100px auto 20px auto;
-    gap: 20px;
-  }
-  .sidebar {
-    width: 25%;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,229,255,0.2);
-    height: fit-content;
-  }
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  .sidebar ul li {
-    margin: 15px 0;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s, text-shadow 0.3s;
-  }
-  .sidebar ul li:hover {
-    color: #00e5ff;
-    text-shadow: 0 0 5px #00e5ff;
-  }
-  .trending h4 {
-    margin-bottom: 10px;
-    color: #00e5ff;
-  }
-  .trending p {
-    margin: 5px 0;
-    color: #ccc;
-    cursor: pointer;
-    transition: color 0.3s, text-shadow 0.3s;
-  }
-  .trending p:hover {
-    color: #00e5ff;
-    text-shadow: 0 0 5px #00e5ff;
-  }
-  .feed {
-    width: 50%;
-  }
-  .new-tweet {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 15px rgba(0,229,255,0.2);
-  }
-  .new-tweet textarea {
-    width: 100%;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    border-radius: 10px;
-    padding: 10px;
-    color: #e0e0e0;
-    resize: none;
-    font-size: 14px;
-    outline: none;
-  }
-  .new-tweet button {
-    margin-top: 10px;
-    background: #00e5ff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    float: left;
-    transition: box-shadow 0.3s;
-  }
-  .new-tweet button:hover {
-    box-shadow: 0 0 15px #00e5ff;
-  }
-  .tweet {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    transition: background-color 0.3s;
-    box-shadow: 0 0 10px rgba(0,229,255,0.1);
-  }
-  .tweet:hover {
-    background: rgba(255,255,255,0.08);
-  }
-  .tweet-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 5px;
-    cursor: pointer;
-  }
-  .tweet-header img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #00e5ff;
-  }
-  .tweet-header h3 {
-    margin: 0;
-    font-size: 16px;
-  }
-  .tweet-header span {
-    color: #aaa;
-    font-size: 14px;
-    margin-right: 5px;
-  }
-  .tweet p {
-    margin: 10px 0 10px 0;
-    font-size: 15px;
-  }
-  .tweet-actions {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-    color: #888;
-    font-size: 14px;
-  }
-  .tweet-actions span {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: color 0.3s, text-shadow 0.3s;
-    gap: 5px;
-  }
-  .tweet-actions span:hover {
-    color: #00e5ff;
-    text-shadow: 0 0 5px #00e5ff;
-  }
-  .count {
-    font-size: 12px;
-    color: #aaa;
-  }
-  .score {
-    font-size: 12px;
-    color: #00e5ff;
-    margin-bottom: 5px;
-  }
-  /* التعليقات */
-  .comments {
-    margin-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 10px;
-  }
-  .comments div {
-    margin: 5px 0;
-    font-size: 13px;
-    color: #ccc;
-  }
-  .comment-box {
-    margin-top: 10px;
-  }
-  .comment-box input {
-    width: 80%;
-    padding: 5px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    background: rgba(255,255,255,0.1);
-    color: #e0e0e0;
-  }
-  .comment-box button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 8px;
-    background: #00e5ff;
-    color: #000;
-    cursor: pointer;
-  }
-  /* modal الملف الشخصي */
-  .profile-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(10px);
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-  }
-  .profile-content {
-    background: rgba(255,255,255,0.05);
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    width: 300px;
-    box-shadow: 0 0 15px rgba(0,229,255,0.2);
-  }
-  .profile-content img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 3px solid #00e5ff;
-  }
-  .profile-content h2 {
-    margin: 10px 0 5px 0;
-    color: #00e5ff;
-  }
-  .profile-stats {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
-  }
-  .profile-stats div {
-    text-align: center;
-  }
-  .close-btn {
-    margin-top: 15px;
-    background: #00e5ff;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    color: #000;
-    cursor: pointer;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Future Twitter</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 2rem;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+    }
+    .tweet-box {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .tweet-box textarea {
+      width: 60%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      resize: none;
+      font-size: 1rem;
+    }
+    .tweet-box button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      background: #1da1f2;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 1rem;
+    }
+    #tweets {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .tweet {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 15px;
+    }
+    .tweet-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .tweet-header img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .tweet-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .tweet-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .tweet-actions span {
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <header>🚀 تويتر المستقبل 🚀</header>
+  <header>🚀 Future Twitter</header>
 
-  <div class="container">
-    <div class="sidebar">
-      <ul>
-        <li>الصفحة الرئيسية</li>
-        <li>الإشعارات</li>
-        <li>الرسائل</li>
-        <li>الملف الشخصي</li>
-      </ul>
+  <div class="tweet-box">
+    <textarea id="tweetText" rows="3" placeholder="ماذا يحدث؟"></textarea>
+    <button onclick="addTweet()">نشر</button>
+  </div>
 
-      <div class="trending">
-        <h4>الشائع الآن</h4>
-        <p>#تكنولوجيا</p>
-        <p>#ذكاء_اصطناعي</p>
-        <p>#فضاء</p>
-      </div>
-    </div>
+  <div id="tweets"></div>
 
-    <div class="feed">
-      <div class="new-tweet">
-        <textarea id="tweetText" rows="3" placeholder="ما الذي يدور في بالك؟ 🚀"></textarea>
-        <button onclick="addTweet()">غرد</button>
-        <div style="clear: both;"></div>
-      </div>
+  <!-- Firebase App (core SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 
-      <div id="tweets">
-        <!-- تغريدة نموذجية -->
-        <div class="tweet">
-          <div class="score">🔥 نقاط التفاعل: <span class="total-score">0</span></div>
-          <div class="tweet-header" onclick="openProfile('نورة','@noura','https://picsum.photos/seed/robot1/80')">
-            <img src="https://picsum.photos/seed/robot1/40" alt="Avatar">
-            <h3>نورة <span>@noura</span></h3>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+      authDomain: "future-twitter.firebaseapp.com",
+      projectId: "future-twitter",
+      storageBucket: "future-twitter.firebasestorage.app",
+      messagingSenderId: "603335040034",
+      appId: "1:603335040034:web:593019e8e8e80ed51e7e7b",
+      measurementId: "G-V0MS908RXJ"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // إضافة تغريدة
+    async function addTweet() {
+      const tweetText = document.getElementById('tweetText').value.trim();
+      if (tweetText === '') return;
+
+      await db.collection('tweets').add({
+        text: tweetText,
+        time: Date.now()
+      });
+
+      document.getElementById('tweetText').value = '';
+    }
+
+    // قراءة التغريدات في الوقت الفعلي
+    db.collection('tweets').orderBy('time','desc').onSnapshot(snapshot => {
+      const tweetContainer = document.getElementById('tweets');
+      tweetContainer.innerHTML = '';
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const tweetDiv = document.createElement('div');
+        tweetDiv.classList.add('tweet');
+        tweetDiv.innerHTML = `
+          <div class="tweet-header">
+            <img src="https://i.pravatar.cc/50?img=${Math.floor(Math.random()*70)}" alt="Avatar">
+            <h3>مستخدم <span>@user</span></h3>
           </div>
-          <p>مرحبًا بكم في تويتر المستقبل ✨</p>
+          <p>${data.text}</p>
           <div class="tweet-actions">
-            <span onclick="toggleCommentBox(this)">💬 تعليق <span class="count">0</span></span>
-            <span onclick="updateCount(this)">🔁 إعادة تغريد <span class="count">0</span></span>
-            <span onclick="toggleLike(this)">❤️ إعجاب <span class="count">0</span></span>
-            <span onclick="updateCount(this)">🔖 حفظ <span class="count">0</span></span>
+            <span>❤️ إعجاب</span>
+            <span>💬 تعليق</span>
+            <span>🔁 إعادة تغريد</span>
+            <span>🔖 حفظ</span>
           </div>
-          <div class="comments"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal الملف الشخصي -->
-  <div class="profile-modal" id="profileModal">
-    <div class="profile-content">
-      <img id="profileImg" src="" alt="Profile">
-      <h2 id="profileName"></h2>
-      <p id="profileHandle"></p>
-      <div class="profile-stats">
-        <div><strong id="tweetsCount">0</strong><br>تغريدات</div>
-        <div><strong id="followersCount">0</strong><br>متابعون</div>
-        <div><strong id="followingCount">0</strong><br>متابَعون</div>
-      </div>
-      <button class="close-btn" onclick="closeProfile()">إغلاق</button>
-    </div>
-  </div>
-
-<script>
-  const avatars = [
-    'https://picsum.photos/seed/robot1/40',
-    'https://picsum.photos/seed/robot2/40',
-    'https://picsum.photos/seed/robot3/40',
-    'https://picsum.photos/seed/robot4/40'
-  ];
-
-  function addTweet() {
-    const text = document.getElementById('tweetText').value.trim();
-    if(text==='') return;
-    const randomAvatar = avatars[Math.floor(Math.random()*avatars.length)];
-    const tweetsDiv = document.getElementById('tweets');
-
-    const tweetDiv = document.createElement('div');
-    tweetDiv.classList.add('tweet');
-    tweetDiv.innerHTML = `
-      <div class="score">🔥 نقاط التفاعل: <span class="total-score">0</span></div>
-      <div class="tweet-header" onclick="openProfile('أنت','@you','${randomAvatar.replace('/40','/80')}')">
-        <img src="${randomAvatar}" alt="Avatar">
-        <h3>أنت <span>@you</span></h3>
-      </div>
-      <p>${text}</p>
-      <div class="tweet-actions">
-        <span onclick="toggleCommentBox(this)">💬 تعليق <span class="count">0</span></span>
-        <span onclick="updateCount(this)">🔁 إعادة تغريد <span class="count">0</span></span>
-        <span onclick="toggleLike(this)">❤️ إعجاب <span class="count">0</span></span>
-        <span onclick="updateCount(this)">🔖 حفظ <span class="count">0</span></span>
-      </div>
-      <div class="comments"></div>
-    `;
-    tweetsDiv.prepend(tweetDiv);
-    document.getElementById('tweetText').value='';
-  }
-
-  function updateCount(el) {
-    let c = el.querySelector('.count');
-    c.textContent = parseInt(c.textContent)+1;
-    updateScore(el.closest('.tweet'));
-  }
-
-  function toggleLike(el) {
-    let c = el.querySelector('.count');
-    let count = parseInt(c.textContent);
-    if(el.classList.contains('liked')) {
-      el.classList.remove('liked');
-      count--;
-      el.style.color='#888';
-      el.style.textShadow='none';
-    } else {
-      el.classList.add('liked');
-      count++;
-      el.style.color='#ff1744';
-      el.style.textShadow='0 0 5px #ff1744';
-    }
-    c.textContent = count;
-    updateScore(el.closest('.tweet'));
-  }
-
-  function updateScore(tweet) {
-    let total=0;
-    tweet.querySelectorAll('.count').forEach(c=>total+=parseInt(c.textContent));
-    tweet.querySelector('.total-score').textContent=total;
-  }
-
-  // التعليقات
-  function toggleCommentBox(el) {
-    const tweet = el.closest('.tweet');
-    let commentBox = tweet.querySelector('.comment-box');
-    if(commentBox) {
-      commentBox.remove();
-    } else {
-      commentBox = document.createElement('div');
-      commentBox.classList.add('comment-box');
-      commentBox.innerHTML=`
-        <input type="text" placeholder="أضف تعليق...">
-        <button onclick="addComment(this)">إرسال</button>
-      `;
-      tweet.appendChild(commentBox);
-    }
-  }
-
-  function addComment(btn) {
-    const commentBox = btn.parentElement;
-    const input = commentBox.querySelector('input');
-    const text = input.value.trim();
-    if(text==='') return;
-    const tweet = btn.closest('.tweet');
-    const commentsDiv = tweet.querySelector('.comments');
-    const newComment = document.createElement('div');
-    newComment.textContent='💬 '+text;
-    commentsDiv.appendChild(newComment);
-    input.value='';
-    // زيادة عدد التعليقات
-    const commentSpan = tweet.querySelector('.tweet-actions span:first-child .count');
-    commentSpan.textContent=parseInt(commentSpan.textContent)+1;
-    updateScore(tweet);
-  }
-
-  // الملف الشخصي modal
-  function openProfile(name,handle,img) {
-    document.getElementById('profileName').textContent=name;
-    document.getElementById('profileHandle').textContent=handle;
-    document.getElementById('profileImg').src=img;
-    document.getElementById('tweetsCount').textContent=Math.floor(Math.random()*500);
-    document.getElementById('followersCount').textContent=Math.floor(Math.random()*1000);
-    document.getElementById('followingCount').textContent=Math.floor(Math.random()*800);
-    document.getElementById('profileModal').style.display='flex';
-  }
-
-  function closeProfile() {
-    document.getElementById('profileModal').style.display='none';
-  }
-</script>
+        `;
+        tweetContainer.appendChild(tweetDiv);
+      });
+    });
+  </script>
 </body>
 </html>
