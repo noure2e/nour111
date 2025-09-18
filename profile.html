@@ -1,161 +1,207 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Future Twitter - الملف الشخصي</title>
-<style>
-body {
-  margin:0; padding:0;
-  font-family: Arial, sans-serif;
-  background:#0f172a; color:#fff;
-}
-header {
-  background:#1e293b; padding:15px;
-  display:flex; justify-content: space-between; align-items:center;
-}
-header a { color:#3b82f6; text-decoration:none; }
-.container { max-width:600px; margin:20px auto; }
-.profile-info {
-  background:#1e293b; padding:15px; border-radius:10px; text-align:center; margin-bottom:20px;
-}
-.profile-info img { width:80px; height:80px; border-radius:50%; margin-bottom:10px; }
-.profile-info button { padding:8px 12px; border:none; border-radius:5px; background:#3b82f6; cursor:pointer; color:#fff; }
-.tweet { background:#1e293b; padding:15px; border-radius:10px; margin-bottom:15px; }
-.tweet img { max-width:100%; border-radius:10px; margin-top:10px; }
-.actions { display:flex; gap:10px; margin-top:10px; }
-.actions button { flex:1; background:#334155; border:none; border-radius:5px; color:#fff; padding:8px; cursor:pointer; }
-.comment-box { margin-top:10px; display:flex; }
-.comment-box input { flex:1; padding:5px; border-radius:5px; border:none; }
-.comment-box button { padding:5px 10px; margin-left:5px; border:none; border-radius:5px; background:#3b82f6; color:#fff; cursor:pointer; }
-.comments-list { margin-top:10px; font-size:14px; }
-.comments-list div { margin-bottom:5px; background:#334155; padding:5px; border-radius:5px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الملف الشخصي</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      width: 100%;
+      padding: 15px;
+      background: #1e293b;
+      text-align: center;
+      font-size: 24px;
+    }
+    .profile-info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 10px;
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    .tweets {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .tweet {
+      background: #1e293b;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    .tweet img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .actions button {
+      flex: 1;
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.follow-btn {
+      margin-top: 10px;
+      padding: 10px;
+      background: #3b82f6;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
+  <header><a href="home.html" style="color:#3b82f6;text-decoration:none;">⬅ العودة</a> الملف الشخصي</header>
 
-<header>
-  <a href="home.html">⬅ العودة للرئيسية</a>
-  <h2 id="profileUsername"></h2>
-</header>
-
-<div class="container">
   <div class="profile-info">
-    <img id="profileAvatar" src="https://via.placeholder.com/80" alt="Avatar">
-    <h3 id="profileName"></h3>
+    <h2 id="profileName">الملف الشخصي</h2>
     <p>عدد التغريدات: <span id="tweetsCount">0</span></p>
-    <p>المتابعين: <span id="followersCount">0</span> | المتابعون: <span id="followingCount">0</span></p>
-    <button id="followBtn">متابعة</button>
+    <p>المتابعون: <span id="followersCount">0</span> | المتابعون: <span id="followingCount">0</span></p>
+    <button id="followBtn" class="follow-btn">متابعة</button>
   </div>
 
-  <div id="tweets"></div>
-</div>
+  <div class="tweets" id="tweets"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, query, where, onSnapshot, orderBy, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
-  authDomain: "future-twitter.firebaseapp.com",
-  projectId: "future-twitter",
-  storageBucket: "future-twitter.appspot.com",
-  messagingSenderId: "603335040034",
-  appId: "1:603335040034:web:301ad6536582c15e1e7e7b"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+      authDomain: "future-twitter.firebaseapp.com",
+      projectId: "future-twitter",
+      storageBucket: "future-twitter.appspot.com",
+      messagingSenderId: "603335040034",
+      appId: "1:603335040034:web:301ad6536582c15e1e7e7b"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-const params = new URLSearchParams(window.location.search);
-const profileUser = params.get('user');
+    const params = new URLSearchParams(window.location.search);
+    const profileUsername = params.get('user');
+    document.getElementById('profileName').textContent = profileUsername;
 
-if(!profileUser) window.location.href = 'home.html';
+    const currentUser = localStorage.getItem('username');
 
-const currentUser = localStorage.getItem('username');
+    const profileRef = doc(db, 'users', profileUsername);
+    const currentUserRef = doc(db, 'users', currentUser);
+    const followBtn = document.getElementById('followBtn');
 
-const profileName = document.getElementById('profileName');
-const profileUsername = document.getElementById('profileUsername');
-const profileAvatar = document.getElementById('profileAvatar');
-const followersCount = document.getElementById('followersCount');
-const followingCount = document.getElementById('followingCount');
-const tweetsCount = document.getElementById('tweetsCount');
-const followBtn = document.getElementById('followBtn');
-const tweetsContainer = document.getElementById('tweets');
+    // تحديث معلومات المتابعين والمتابعين
+    const updateFollowButton = async () => {
+      const profileSnap = await getDoc(profileRef);
+      const profileData = profileSnap.data() || { followers: [], following: [] };
+      document.getElementById('followersCount').textContent = profileData.followers.length;
+      document.getElementById('followingCount').textContent = profileData.following.length;
 
-// جلب بيانات المستخدم
-async function loadProfile() {
-  const userRef = doc(db, 'users', profileUser);
-  const userSnap = await getDoc(userRef);
-  if(userSnap.exists()) {
-    const data = userSnap.data();
-    profileName.textContent = data.username;
-    profileUsername.textContent = '@'+data.username;
-    profileAvatar.src = data.avatar || 'https://via.placeholder.com/80';
-    followersCount.textContent = data.followers.length;
-    followingCount.textContent = data.following.length;
+      if (profileData.followers.includes(currentUser)) {
+        followBtn.textContent = 'إلغاء المتابعة';
+      } else {
+        followBtn.textContent = 'متابعة';
+      }
+    };
 
-    if(data.followers.includes(currentUser)) {
-      followBtn.textContent = 'إلغاء متابعة';
-    } else {
-      followBtn.textContent = 'متابعة';
-    }
-  }
-}
+    followBtn.onclick = async () => {
+      const profileSnap = await getDoc(profileRef);
+      const profileData = profileSnap.data() || { followers: [], following: [] };
 
-// متابعة/إلغاء متابعة
-followBtn.onclick = async () => {
-  const userRef = doc(db, 'users', profileUser);
-  const currentRef = doc(db, 'users', currentUser);
+      if (profileData.followers.includes(currentUser)) {
+        await updateDoc(profileRef, { followers: arrayRemove(currentUser) });
+        await updateDoc(currentUserRef, { following: arrayRemove(profileUsername) });
+      } else {
+        await updateDoc(profileRef, { followers: arrayUnion(currentUser) });
+        await updateDoc(currentUserRef, { following: arrayUnion(profileUsername) });
+      }
+      updateFollowButton();
+    };
 
-  const userSnap = await getDoc(userRef);
-  if(!userSnap.exists()) return;
+    updateFollowButton();
 
-  const followers = userSnap.data().followers || [];
-  if(followers.includes(currentUser)) {
-    await updateDoc(userRef, { followers: arrayRemove(currentUser) });
-    await updateDoc(currentRef, { following: arrayRemove(profileUser) });
-    followBtn.textContent = 'متابعة';
-  } else {
-    await updateDoc(userRef, { followers: arrayUnion(currentUser) });
-    await updateDoc(currentRef, { following: arrayUnion(profileUser) });
-    followBtn.textContent = 'إلغاء متابعة';
-  }
+    // جلب التغريدات الخاصة بالمستخدم
+    const q = query(collection(db, "tweets"), where("user", "==", profileUsername), orderBy("timestamp", "desc"));
+    const tweetsContainer = document.getElementById('tweets');
 
-  loadProfile();
-};
+    onSnapshot(q, (snapshot) => {
+      tweetsContainer.innerHTML = '';
+      let count = 0;
+      snapshot.forEach(docSnap => {
+        const t = docSnap.data();
+        const id = docSnap.id;
+        count++;
+        tweetsContainer.innerHTML += `
+          <div class="tweet">
+            <div>${t.text}</div>
+            ${t.image ? `<img src="${t.image}" alt="">` : ''}
+            <div class="actions">
+              <button onclick="likeTweet('${id}')">❤️ ${t.likes || 0}</button>
+              <button onclick="retweetTweet('${id}')">🔁 ${t.retweets || 0}</button>
+              <button onclick="saveTweet('${id}')">🔖 ${t.saves || 0}</button>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('tweetsCount').textContent = count;
+    });
 
-// جلب تغريدات المستخدم
-const q = query(collection(db, "tweets"), where("user","==",profileUser), orderBy("timestamp","desc"));
-onSnapshot(q, snapshot => {
-  tweetsContainer.innerHTML = '';
-  let count = 0;
-  snapshot.forEach(docSnap => {
-    const t = docSnap.data();
-    const id = docSnap.id;
-    count++;
+    // التفاعلات
+    window.likeTweet = async (id) => {
+      const tweetRef = doc(db, "tweets", id);
+      const tweetSnap = await getDoc(tweetRef);
+      const data = tweetSnap.data();
+      if (!data.likedBy.includes(currentUser)) {
+        await updateDoc(tweetRef, {
+          likes: data.likes + 1,
+          likedBy: arrayUnion(currentUser)
+        });
+      }
+    };
 
-    const tweetDiv = document.createElement('div');
-    tweetDiv.classList.add('tweet');
+    window.retweetTweet = async (id) => {
+      const tweetRef = doc(db, "tweets", id);
+      const tweetSnap = await getDoc(tweetRef);
+      const data = tweetSnap.data();
+      if (!data.retweetedBy.includes(currentUser)) {
+        await updateDoc(tweetRef, {
+          retweets: data.retweets + 1,
+          retweetedBy: arrayUnion(currentUser)
+        });
+      }
+    };
 
-    tweetDiv.innerHTML = `
-      <div>${t.text || ''}</div>
-      ${t.image ? `<img src="${t.image}" alt="">` : ''}
-      <div class="actions">
-        ❤️ ${t.likes || 0} | 🔁 ${t.retweets || 0} | 🔖 ${t.saves || 0}
-      </div>
-      <div class="comments-list">
-        ${t.comments ? t.comments.map(c => `<div>${c.user}: ${c.text}</div>`).join('') : ''}
-      </div>
-    `;
-
-    tweetsContainer.appendChild(tweetDiv);
-  });
-  tweetsCount.textContent = count;
-});
-
-loadProfile();
-</script>
-
+    window.saveTweet = async (id) => {
+      const tweetRef = doc(db, "tweets", id);
+      const tweetSnap = await getDoc(tweetRef);
+      const data = tweetSnap.data();
+      if (!data.savedBy.includes(currentUser)) {
+        await updateDoc(tweetRef, {
+          saves: data.saves + 1,
+          savedBy: arrayUnion(currentUser)
+        });
+      }
+    };
+  </script>
 </body>
 </html>
