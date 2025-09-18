@@ -1,184 +1,69 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Future Twitter</title>
-  <style>
-    body {
-      background: #0f172a;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      width: 100%;
-      padding: 15px;
-      background: #1e293b;
-      text-align: center;
-      font-size: 24px;
-    }
-    .login, .tweet-box {
-      margin-top: 20px;
-      background: #1e293b;
-      padding: 15px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 600px;
-    }
-    .tweet-box textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      resize: none;
-    }
-    .tweet-box button {
-      margin-top: 10px;
-      padding: 10px;
-      background: #3b82f6;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .tweets {
-      width: 90%;
-      max-width: 600px;
-      margin-top: 20px;
-    }
-    .tweet {
-      background: #1e293b;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-    }
-    .actions {
-      display: flex;
-      gap: 15px;
-      margin-top: 10px;
-    }
-    .actions button {
-      flex: 1;
-      background: #334155;
-      color: #fff;
-      border: none;
-      padding: 8px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    a {
-      color: #3b82f6;
-      text-decoration: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Twitter - تسجيل الدخول</title>
+<style>
+body {
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a; color: #fff;
+  display: flex; justify-content: center; align-items: center; height: 100vh;
+}
+.login-box {
+  background: #1e293b; padding: 20px; border-radius: 10px;
+  width: 90%; max-width: 400px; text-align: center;
+}
+.login-box input {
+  width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none;
+}
+.login-box button {
+  padding: 10px 20px; border: none; border-radius: 5px;
+  background: #3b82f6; color: #fff; cursor: pointer;
+}
+</style>
 </head>
 <body>
-  <header>Future Twitter</header>
+<div class="login-box">
+  <h2>تسجيل الدخول</h2>
+  <input type="text" id="username" placeholder="اسم المستخدم">
+  <input type="url" id="avatar" placeholder="رابط صورة المستخدم (اختياري)">
+  <button onclick="login()">دخول</button>
+</div>
 
-  <div class="login" id="loginBox">
-    <h3>تسجيل الدخول</h3>
-    <input type="text" id="usernameInput" placeholder="اكتب اسم المستخدم" style="width:100%;padding:8px;">
-    <button onclick="login()" style="margin-top:10px;padding:10px;background:#3b82f6;color:#fff;border:none;border-radius:5px;">دخول</button>
-  </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-  <div class="tweet-box" id="tweetBox" style="display:none;">
-    <h3>مرحبا <span id="currentUser"></span></h3>
-    <textarea id="tweetText" rows="3" placeholder="اكتب تغريدتك هنا..."></textarea>
-    <button onclick="postTweet()">غرد</button>
-  </div>
+const firebaseConfig = {
+  apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+  authDomain: "future-twitter.firebaseapp.com",
+  projectId: "future-twitter",
+  storageBucket: "future-twitter.appspot.com",
+  messagingSenderId: "603335040034",
+  appId: "1:603335040034:web:301ad6536582c15e1e7e7b"
+};
 
-  <div class="tweets" id="tweets"></div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+window.login = async () => {
+  const username = document.getElementById('username').value.trim();
+  const avatar = document.getElementById('avatar').value.trim() || '';
+  if(!username) return alert('اكتب اسم المستخدم');
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
-      authDomain: "future-twitter.firebaseapp.com",
-      projectId: "future-twitter",
-      storageBucket: "future-twitter.firebasestorage.app",
-      messagingSenderId: "603335040034",
-      appId: "1:603335040034:web:301ad6536582c15e1e7e7b",
-      measurementId: "G-F9MD8GLXK5"
-    };
+  // تحقق من وجود المستخدم مسبقاً، إذا لم يوجد أنشئه
+  const userRef = doc(db, 'users', username);
+  const userSnap = await getDoc(userRef);
+  if(!userSnap.exists()) {
+    await setDoc(userRef, { username, avatar, followers: [], following: [] });
+  }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let currentUser = localStorage.getItem('username') || '';
-
-    const loginBox = document.getElementById('loginBox');
-    const tweetBox = document.getElementById('tweetBox');
-    const currentUserSpan = document.getElementById('currentUser');
-
-    if (currentUser) {
-      loginBox.style.display = 'none';
-      tweetBox.style.display = 'block';
-      currentUserSpan.textContent = currentUser;
-    }
-
-    window.login = () => {
-      const name = document.getElementById('usernameInput').value.trim();
-      if (!name) return alert('اكتب اسم المستخدم');
-      currentUser = name;
-      localStorage.setItem('username', name);
-      loginBox.style.display = 'none';
-      tweetBox.style.display = 'block';
-      currentUserSpan.textContent = name;
-    };
-
-    window.postTweet = async () => {
-      const text = document.getElementById('tweetText').value.trim();
-      if (!text) return alert('اكتب التغريدة');
-      await addDoc(collection(db, "tweets"), {
-        user: currentUser,
-        text: text,
-        timestamp: serverTimestamp(),
-        likes: 0,
-        retweets: 0,
-        saves: 0
-      });
-      document.getElementById('tweetText').value = '';
-    };
-
-    const tweetsContainer = document.getElementById('tweets');
-    const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
-    onSnapshot(q, (snapshot) => {
-      tweetsContainer.innerHTML = '';
-      snapshot.forEach(docSnap => {
-        const t = docSnap.data();
-        const id = docSnap.id;
-        tweetsContainer.innerHTML += `
-          <div class="tweet">
-            <a href="profile.html?user=${t.user}" style="color:#3b82f6;text-decoration:none;">
-              <strong>${t.user}</strong>
-            </a>
-            <p>${t.text}</p>
-            <div class="actions">
-              <button onclick="likeTweet('${id}')">❤️ ${t.likes || 0}</button>
-              <button onclick="retweetTweet('${id}')">🔁 ${t.retweets || 0}</button>
-              <button onclick="saveTweet('${id}')">🔖 ${t.saves || 0}</button>
-            </div>
-          </div>
-        `;
-      });
-    });
-
-    window.likeTweet = async (id) => {
-      await updateDoc(doc(db, "tweets", id), { likes: increment(1) });
-    };
-    window.retweetTweet = async (id) => {
-      await updateDoc(doc(db, "tweets", id), { retweets: increment(1) });
-    };
-    window.saveTweet = async (id) => {
-      await updateDoc(doc(db, "tweets", id), { saves: increment(1) });
-    };
-  </script>
+  localStorage.setItem('username', username);
+  localStorage.setItem('avatar', avatar);
+  window.location.href = 'home.html';
+};
+</script>
 </body>
 </html>
