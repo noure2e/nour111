@@ -87,13 +87,15 @@
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "ضع الـ API KEY هنا",
-      authDomain: "ضع الـ authDomain هنا",
-      projectId: "ضع الـ projectId هنا",
-      storageBucket: "ضع الـ storageBucket هنا",
-      messagingSenderId: "ضع الـ messagingSenderId هنا",
-      appId: "ضع الـ appId هنا"
-    };
+  apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+  authDomain: "future-twitter.firebaseapp.com",
+  projectId: "future-twitter",
+  storageBucket: "future-twitter.firebasestorage.app",
+  messagingSenderId: "603335040034",
+  appId: "1:603335040034:web:301ad6536582c15e1e7e7b",
+  measurementId: "G-F9MD8GLXK5"
+};
+
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
