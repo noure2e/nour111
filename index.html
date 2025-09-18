@@ -3,150 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Future Twitter</title>
+<title>تويتر بسيط مع Firestore</title>
 <style>
-  body { background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); color:#fff; font-family: Arial,sans-serif; margin:0; padding:0; }
-  header { text-align:center; padding:20px; font-size:2rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);}
-  .tweet-box { display:flex; justify-content:center; padding:20px; flex-wrap: wrap; }
-  .tweet-box textarea { width:60%; min-width:250px; padding:10px; border-radius:10px; border:none; resize:none; font-size:1rem; margin-bottom:10px; }
-  .tweet-box button { padding:10px 20px; margin-left:10px; background:#1da1f2; border:none; border-radius:10px; cursor:pointer; color:#fff; font-size:1rem; }
-  #tweets { max-width:700px; margin:0 auto; padding:20px; }
-  .tweet { background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); margin-bottom:20px; padding:15px; border-radius:15px; word-wrap: break-word; }
-  .tweet-header { display:flex; align-items:center; margin-bottom:10px; cursor:pointer; }
-  .tweet-header img { width:50px; height:50px; border-radius:50%; margin-right:10px; }
-  .tweet-header h3 { margin:0; font-size:1.2rem; }
-  .tweet-actions { display:flex; justify-content:space-around; margin-top:10px; font-size:0.9rem; }
-  .tweet-actions span { cursor:pointer; }
-  #profile { max-width:500px; margin:20px auto; background: rgba(255,255,255,0.1); padding:20px; border-radius:15px; display:none; }
-  #profile img { width:80px; height:80px; border-radius:50%; }
-  #profile button { margin-top:10px; padding:5px 10px; background:#1da1f2; border:none; border-radius:5px; cursor:pointer; }
-  #loginBtn, #logoutBtn { display:block; margin:20px auto; padding:10px 20px; font-size:1rem; border:none; border-radius:10px; cursor:pointer; background:#1da1f2; color:#fff; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #0d1117;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    background: #161b22;
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #30363d;
+  }
+  #login {
+    margin: 20px;
+    text-align: center;
+  }
+  input, button, textarea {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+  }
+  #tweets {
+    width: 90%;
+    max-width: 600px;
+  }
+  .tweet {
+    background: #161b22;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid #30363d;
+  }
+  .tweet-user {
+    font-weight: bold;
+    color: #58a6ff;
+  }
 </style>
+<!-- Firebase -->
+<script type="module">
+  // استبدل هذه الإعدادات بإعدادات مشروعك من Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSy.....", // هنا بياناتك
+    authDomain: "yourproject.firebaseapp.com",
+    projectId: "yourproject",
+    storageBucket: "yourproject.appspot.com",
+    messagingSenderId: "....",
+    appId: "1:....",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // نستخدم متغير عام ليحمل اسم المستخدم
+  let currentUser = localStorage.getItem('username') || '';
+
+  window.onload = () => {
+    if (currentUser) {
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('tweetBox').style.display = 'block';
+    }
+    loadTweets();
+  }
+
+  window.login = () => {
+    const name = document.getElementById('username').value.trim();
+    if (name) {
+      currentUser = name;
+      localStorage.setItem('username', name);
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('tweetBox').style.display = 'block';
+    }
+  }
+
+  async function postTweet() {
+    const text = document.getElementById('tweetInput').value.trim();
+    if (!text || !currentUser) return;
+    try {
+      await addDoc(collection(db, "tweets"), {
+        user: currentUser,
+        text: text,
+        timestamp: new Date()
+      });
+      document.getElementById('tweetInput').value = '';
+    } catch (e) {
+      console.error("Error adding tweet: ", e);
+    }
+  }
+  window.postTweet = postTweet;
+
+  function loadTweets() {
+    const tweetsRef = collection(db, "tweets");
+    const q = query(tweetsRef, orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById('tweets');
+      container.innerHTML = '';
+      snapshot.forEach(doc => {
+        const t = doc.data();
+        container.innerHTML += `
+          <div class="tweet">
+            <div class="tweet-user">@${t.user}</div>
+            <div>${t.text}</div>
+          </div>
+        `;
+      });
+    });
+  }
+</script>
 </head>
 <body>
-<header>🚀 Future Twitter</header>
 
-<button id="loginBtn">تسجيل الدخول بـ Google</button>
-<button id="logoutBtn" style="display:none;">تسجيل الخروج</button>
+<header>تويتر بسيط مع Firestore</header>
 
-<div class="tweet-box" style="display:none;">
-  <textarea id="tweetText" rows="3" placeholder="ماذا يحدث؟"></textarea>
-  <button onclick="addTweet()">نشر</button>
+<div id="login">
+  <h2>أدخل اسم المستخدم:</h2>
+  <input type="text" id="username" placeholder="اسم المستخدم">
+  <button onclick="login()">دخول</button>
 </div>
 
+<div id="tweetBox" style="display:none;">
+  <textarea id="tweetInput" rows="3" cols="40" placeholder="ماذا تريد أن تغرد؟"></textarea><br>
+  <button onclick="postTweet()">غرد</button>
+</div>
+
+<h2>التغريدات</h2>
 <div id="tweets"></div>
 
-<div id="profile">
-  <img id="profileImg" src="">
-  <h3 id="profileName"></h3>
-  <p>التغريدات: <span id="tweetCount"></span></p>
-  <p>المتابعون: <span id="followersCount"></span></p>
-  <p>يتابع: <span id="followingCount"></span></p>
-  <button id="followBtn" onclick="toggleFollow()">متابعة</button>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
-    authDomain: "future-twitter.firebaseapp.com",
-    projectId: "future-twitter",
-    storageBucket: "future-twitter.firebasestorage.app",
-    messagingSenderId: "603335040034",
-    appId: "1:603335040034:web:593019e8e8e80ed51e7e7b",
-    measurementId: "G-V0MS908RXJ"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-const tweetsContainer = document.getElementById('tweets');
-const loginBtn = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-
-loginBtn.addEventListener('click', () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider); // بدل popup لتجنب مشاكل الهواتف
-});
-
-logoutBtn.addEventListener('click', () => auth.signOut());
-
-auth.onAuthStateChanged(user => {
-    if(user){
-        document.querySelector('.tweet-box').style.display = 'flex';
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'block';
-    } else {
-        document.querySelector('.tweet-box').style.display = 'none';
-        loginBtn.style.display = 'block';
-        logoutBtn.style.display = 'none';
-    }
-});
-
-async function addTweet(){
-    const tweetText = document.getElementById('tweetText').value.trim();
-    if(!tweetText) return;
-    const user = auth.currentUser;
-    if(!user) return alert('يجب تسجيل الدخول أولاً');
-
-    await db.collection('tweets').add({
-        text: tweetText,
-        time: Date.now(),
-        userId: user.uid,
-        username: user.displayName,
-        photoURL: user.photoURL
-    });
-
-    const userRef = db.collection('users').doc(user.uid);
-    userRef.set({ tweetCount: firebase.firestore.FieldValue.increment(1) }, { merge:true });
-    document.getElementById('tweetText').value = '';
-}
-
-db.collection('tweets').orderBy('time','desc').onSnapshot(snapshot => {
-    tweetsContainer.innerHTML = '';
-    snapshot.forEach(doc => {
-        const data = doc.data();
-        const tweetDiv = document.createElement('div');
-        tweetDiv.classList.add('tweet');
-        tweetDiv.innerHTML = `
-            <div class="tweet-header" onclick="loadProfile('${data.userId}')">
-              <img src="${data.photoURL}" alt="Avatar">
-              <h3>${data.username} <span>@${data.username.replace(/\s+/g,'').toLowerCase()}</span></h3>
-            </div>
-            <p>${data.text}</p>
-            <div class="tweet-actions">
-              <span>❤️ إعجاب</span>
-              <span>💬 تعليق</span>
-              <span>🔁 إعادة تغريد</span>
-              <span>🔖 حفظ</span>
-            </div>
-        `;
-        tweetsContainer.appendChild(tweetDiv);
-    });
-});
-
-async function loadProfile(uid){
-    const userRef = db.collection('users').doc(uid);
-    const docSnap = await userRef.get();
-    if(!docSnap.exists){
-        await userRef.set({ tweetCount:0, followers:0, following:0 });
-    }
-    const userData = (await userRef.get()).data();
-    const currentUser = auth.currentUser;
-    document.getElementById('profileImg').src = currentUser.photoURL;
-    document.getElementById('profileName').innerText = currentUser.displayName;
-    document.getElementById('tweetCount').innerText = userData.tweetCount || 0;
-    document.getElementById('followersCount').innerText = userData.followers || 0;
-    document.getElementById('followingCount').innerText = userData.following || 0;
-    document.getElementById('profile').style.display='block';
-}
-
-function toggleFollow(){
-    alert('ميزة المتابعة غير مفعلة الآن، يمكن إضافتها لاحقًا.');
-}
-</script>
 </body>
 </html>
