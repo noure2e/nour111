@@ -1,232 +1,204 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Future Twitter - الرئيسية</title>
-<style>
-body {
-  margin: 0; padding: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a; color: #fff;
-}
-header {
-  background: #1e293b; padding: 15px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-header h1 { margin:0; font-size: 24px; }
-header button { padding: 8px 12px; border:none; border-radius:5px; background:#3b82f6; cursor:pointer; color:#fff; }
-
-.container {
-  max-width: 600px; margin: 20px auto;
-}
-
-.tweet-box, .tweet {
-  background:#1e293b; padding:15px; border-radius:10px; margin-bottom:15px;
-}
-
-.tweet-box textarea {
-  width:100%; padding:10px; border-radius:5px; border:none; resize:none;
-}
-
-.tweet-box input[type="file"] {
-  margin-top:10px;
-}
-
-.tweet-box button { margin-top:10px; padding:10px; background:#3b82f6; color:#fff; border:none; border-radius:5px; cursor:pointer; }
-
-.tweet img { max-width:100%; border-radius:10px; margin-top:10px; }
-
-.actions {
-  display:flex; gap:10px; margin-top:10px;
-}
-
-.actions button {
-  flex:1; background:#334155; border:none; border-radius:5px; color:#fff; padding:8px; cursor:pointer;
-}
-
-.user-info {
-  display:flex; align-items:center; gap:10px; margin-bottom:10px;
-}
-
-.user-info img { width:40px; height:40px; border-radius:50%; }
-
-.comment-box { margin-top:10px; }
-.comment-box input {
-  width: calc(100% - 80px); padding:5px; border-radius:5px; border:none;
-}
-.comment-box button { padding:5px 10px; margin-left:5px; border:none; border-radius:5px; background:#3b82f6; color:#fff; cursor:pointer; }
-
-.comments-list { margin-top:10px; font-size:14px; }
-.comments-list div { margin-bottom:5px; background:#334155; padding:5px; border-radius:5px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Future Twitter</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      width: 100%;
+      padding: 15px;
+      background: #1e293b;
+      text-align: center;
+      font-size: 24px;
+    }
+    .login, .tweet-box {
+      margin-top: 20px;
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+    }
+    .tweet-box textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      resize: none;
+    }
+    .tweet-box button {
+      margin-top: 10px;
+      padding: 10px;
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .tweets {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .tweet {
+      background: #1e293b;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    .tweet img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .actions button {
+      flex: 1;
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <header>Future Twitter</header>
 
-<header>
-  <h1>Future Twitter</h1>
-  <button onclick="logout()">خروج</button>
-</header>
+  <div class="login" id="loginBox">
+    <h3>تسجيل الدخول</h3>
+    <input type="text" id="usernameInput" placeholder="اكتب اسم المستخدم" style="width:100%;padding:8px;">
+    <button onclick="login()" style="margin-top:10px;">دخول</button>
+  </div>
 
-<div class="container">
-  <div class="tweet-box">
-    <h3>مرحباً <span id="currentUser"></span></h3>
+  <div class="tweet-box" id="tweetBox" style="display:none;">
+    <h3>مرحبا <span id="currentUser"></span></h3>
     <textarea id="tweetText" rows="3" placeholder="اكتب تغريدتك هنا..."></textarea>
-    <input type="file" id="tweetImage" accept="image/*">
+    <!-- رفع الصورة -->
+    <input type="file" id="tweetImage" accept="image/*" style="margin-top:10px;">
     <button onclick="postTweet()">غرد</button>
   </div>
 
-  <div id="tweets"></div>
-</div>
+  <div class="tweets" id="tweets"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
-  authDomain: "future-twitter.firebaseapp.com",
-  projectId: "future-twitter",
-  storageBucket: "future-twitter.appspot.com",
-  messagingSenderId: "603335040034",
-  appId: "1:603335040034:web:301ad6536582c15e1e7e7b"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+      authDomain: "future-twitter.firebaseapp.com",
+      projectId: "future-twitter",
+      storageBucket: "future-twitter.appspot.com",
+      messagingSenderId: "603335040034",
+      appId: "1:603335040034:web:301ad6536582c15e1e7e7b"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-let currentUser = localStorage.getItem('username');
-let avatar = localStorage.getItem('avatar') || '';
+    let currentUser = localStorage.getItem('username') || '';
+    const loginBox = document.getElementById('loginBox');
+    const tweetBox = document.getElementById('tweetBox');
+    const currentUserSpan = document.getElementById('currentUser');
 
-if(!currentUser) window.location.href = 'index.html';
-document.getElementById('currentUser').textContent = currentUser;
-
-window.logout = () => {
-  localStorage.clear();
-  window.location.href = 'index.html';
-};
-
-window.postTweet = async () => {
-  const text = document.getElementById('tweetText').value.trim();
-  const fileInput = document.getElementById('tweetImage');
-  let imageUrl = '';
-
-  if(fileInput.files[0]) {
-    const file = fileInput.files[0];
-    const storageRef = ref(storage, 'tweets/' + Date.now() + '_' + file.name);
-    await uploadBytes(storageRef, file);
-    imageUrl = await getDownloadURL(storageRef);
-  }
-
-  if(!text && !imageUrl) return alert('اكتب نص أو أضف صورة');
-
-  await addDoc(collection(db, "tweets"), {
-    user: currentUser,
-    avatar: avatar,
-    text,
-    image: imageUrl,
-    timestamp: serverTimestamp(),
-    likes: 0,
-    retweets: 0,
-    saves: 0,
-    likedBy: [],
-    retweetedBy: [],
-    savedBy: [],
-    comments: []
-  });
-
-  document.getElementById('tweetText').value = '';
-  fileInput.value = '';
-};
-
-const tweetsContainer = document.getElementById('tweets');
-const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
-
-onSnapshot(q, snapshot => {
-  tweetsContainer.innerHTML = '';
-  const fragment = document.createDocumentFragment();
-
-  snapshot.forEach(docSnap => {
-    const t = docSnap.data();
-    const id = docSnap.id;
-
-    const tweetDiv = document.createElement('div');
-    tweetDiv.classList.add('tweet');
-
-    tweetDiv.innerHTML = `
-      <div class="user-info">
-        <img src="${t.avatar || 'https://via.placeholder.com/40'}" alt="">
-        <strong>${t.user}</strong>
-      </div>
-      <div>${t.text || ''}</div>
-      ${t.image ? `<img src="${t.image}" alt="">` : ''}
-      <div class="actions">
-        <button onclick="likeTweet('${id}')">❤️ ${t.likes}</button>
-        <button onclick="retweetTweet('${id}')">🔁 ${t.retweets}</button>
-        <button onclick="saveTweet('${id}')">🔖 ${t.saves}</button>
-      </div>
-      <div class="comment-box">
-        <input type="text" id="comment-${id}" placeholder="أضف تعليقاً...">
-        <button onclick="addComment('${id}')">تعليق</button>
-      </div>
-      <div class="comments-list" id="comments-${id}"></div>
-    `;
-
-    fragment.appendChild(tweetDiv);
-
-    // عرض التعليقات
-    const commentsList = tweetDiv.querySelector(`#comments-${id}`);
-    if(t.comments) {
-      t.comments.forEach(c => {
-        const div = document.createElement('div');
-        div.textContent = `${c.user}: ${c.text}`;
-        commentsList.appendChild(div);
-      });
+    if (currentUser) {
+      loginBox.style.display = 'none';
+      tweetBox.style.display = 'block';
+      currentUserSpan.textContent = currentUser;
     }
-  });
 
-  tweetsContainer.appendChild(fragment);
-});
+    // تسجيل الدخول وإنشاء مستند المستخدم إذا لم يكن موجود
+    window.login = async () => {
+      const name = document.getElementById('usernameInput').value.trim();
+      if (!name) return alert('اكتب اسم المستخدم');
 
-// التفاعلات
-window.likeTweet = async (id) => {
-  const tweetRef = doc(db, "tweets", id);
-  const tweetSnap = await tweetRef.get();
-  await updateDoc(tweetRef, { 
-    likes: increment(1),
-    likedBy: arrayUnion(currentUser)
-  });
-};
+      currentUser = name;
+      localStorage.setItem('username', name);
 
-window.retweetTweet = async (id) => {
-  const tweetRef = doc(db, "tweets", id);
-  await updateDoc(tweetRef, {
-    retweets: increment(1),
-    retweetedBy: arrayUnion(currentUser)
-  });
-};
+      const userRef = doc(db, 'users', currentUser);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          username: currentUser,
+          avatar: "",
+          followers: [],
+          following: []
+        });
+      }
 
-window.saveTweet = async (id) => {
-  const tweetRef = doc(db, "tweets", id);
-  await updateDoc(tweetRef, {
-    saves: increment(1),
-    savedBy: arrayUnion(currentUser)
-  });
-};
+      loginBox.style.display = 'none';
+      tweetBox.style.display = 'block';
+      currentUserSpan.textContent = name;
+    };
 
-window.addComment = async (id) => {
-  const input = document.getElementById(`comment-${id}`);
-  const text = input.value.trim();
-  if(!text) return;
-  const tweetRef = doc(db, "tweets", id);
-  await updateDoc(tweetRef, {
-    comments: arrayUnion({ user: currentUser, text })
-  });
-  input.value = '';
-};
-</script>
+    // نشر تغريدة (نص + صورة)
+    window.postTweet = async () => {
+      const text = document.getElementById('tweetText').value.trim();
+      const imageInput = document.getElementById('tweetImage');
+      if (!text && !imageInput.files.length) return alert('اكتب التغريدة أو اختر صورة');
 
+      let imageUrl = "";
+      if (imageInput.files.length > 0) {
+        const file = imageInput.files[0];
+        const storageRef = ref(storage, `tweets/${file.name}`);
+        await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      await addDoc(collection(db, "tweets"), {
+        user: currentUser,
+        text: text,
+        image: imageUrl,
+        timestamp: serverTimestamp(),
+        likes: 0,
+        retweets: 0,
+        saves: 0,
+        likedBy: [],
+        retweetedBy: [],
+        savedBy: [],
+        comments: []
+      });
+
+      document.getElementById('tweetText').value = '';
+      if (imageInput) imageInput.value = '';
+    };
+
+    // عرض التغريدات
+    const tweetsContainer = document.getElementById('tweets');
+    const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+      tweetsContainer.innerHTML = '';
+      snapshot.forEach(docSnap => {
+        const t = docSnap.data();
+        const id = docSnap.id;
+        tweetsContainer.innerHTML += `
+          <div class="tweet">
+            <strong>${t.user}</strong>
+            <p>${t.text}</p>
+            ${t.image ? `<img src="${t.image}" alt="">` : ''}
+          </div>
+        `;
+      });
+    });
+  </script>
 </body>
 </html>
