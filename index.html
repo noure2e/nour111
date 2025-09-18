@@ -22,29 +22,32 @@
       text-align: center;
       font-size: 24px;
     }
-    #login-section, #tweet-section {
-      width: 100%;
-      max-width: 600px;
+    .login, .tweet-box {
       margin-top: 20px;
-      padding: 15px;
       background: #1e293b;
+      padding: 15px;
       border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
     }
-    input, button, textarea {
+    .tweet-box textarea {
       width: 100%;
       padding: 10px;
-      margin: 5px 0;
-      border: none;
       border-radius: 5px;
+      border: none;
+      resize: none;
     }
-    button {
+    .tweet-box button {
+      margin-top: 10px;
+      padding: 10px;
       background: #3b82f6;
       color: #fff;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
     }
-    #tweets {
-      width: 100%;
+    .tweets {
+      width: 90%;
       max-width: 600px;
       margin-top: 20px;
     }
@@ -53,11 +56,6 @@
       padding: 15px;
       margin-bottom: 10px;
       border-radius: 10px;
-    }
-    .tweet-user {
-      font-weight: bold;
-      color: #3b82f6;
-      cursor: pointer;
     }
     .actions {
       display: flex;
@@ -73,34 +71,33 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <header>Future Twitter 🚀</header>
+  <header>Future Twitter</header>
 
-  <!-- تسجيل دخول بسيط -->
-  <div id="login-section">
-    <h3>تسجيل دخول</h3>
-    <input type="text" id="username" placeholder="اكتب اسمك هنا">
-    <button id="loginBtn">تسجيل</button>
+  <div class="login" id="loginBox">
+    <h3>تسجيل الدخول</h3>
+    <input type="text" id="usernameInput" placeholder="اكتب اسم المستخدم" style="width:100%;padding:8px;">
+    <button onclick="login()" style="margin-top:10px;padding:10px;background:#3b82f6;color:#fff;border:none;border-radius:5px;">دخول</button>
   </div>
 
-  <!-- قسم التغريدات -->
-  <div id="tweet-section" style="display:none;">
-    <h3>أهلاً <span id="currentUser"></span> 👋</h3>
-    <textarea id="tweetText" placeholder="اكتب تغريدتك..."></textarea>
-    <button id="tweetBtn">غرد</button>
+  <div class="tweet-box" id="tweetBox" style="display:none;">
+    <h3>مرحبا <span id="currentUser"></span></h3>
+    <textarea id="tweetText" rows="3" placeholder="اكتب تغريدتك هنا..."></textarea>
+    <button onclick="postTweet()">غرد</button>
   </div>
 
-  <!-- عرض التغريدات -->
-  <div id="tweets"></div>
+  <div class="tweets" id="tweets"></div>
 
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    // ضع هنا إعدادات مشروعك في Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
       authDomain: "future-twitter.firebaseapp.com",
@@ -114,33 +111,31 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // تسجيل دخول بسيط
-    const loginSection = document.getElementById('login-section');
-    const tweetSection = document.getElementById('tweet-section');
+    let currentUser = localStorage.getItem('username') || '';
+
+    const loginBox = document.getElementById('loginBox');
+    const tweetBox = document.getElementById('tweetBox');
     const currentUserSpan = document.getElementById('currentUser');
-    let currentUser = localStorage.getItem('currentUser');
 
     if (currentUser) {
-      loginSection.style.display = 'none';
-      tweetSection.style.display = 'block';
+      loginBox.style.display = 'none';
+      tweetBox.style.display = 'block';
       currentUserSpan.textContent = currentUser;
     }
 
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const username = document.getElementById('username').value.trim();
-      if (username) {
-        currentUser = username;
-        localStorage.setItem('currentUser', username);
-        loginSection.style.display = 'none';
-        tweetSection.style.display = 'block';
-        currentUserSpan.textContent = currentUser;
-      }
-    });
+    window.login = () => {
+      const name = document.getElementById('usernameInput').value.trim();
+      if (!name) return alert('اكتب اسم المستخدم');
+      currentUser = name;
+      localStorage.setItem('username', name);
+      loginBox.style.display = 'none';
+      tweetBox.style.display = 'block';
+      currentUserSpan.textContent = name;
+    };
 
-    // إضافة تغريدة
-    document.getElementById('tweetBtn').addEventListener('click', async () => {
+    window.postTweet = async () => {
       const text = document.getElementById('tweetText').value.trim();
-      if (!text) return alert('اكتب تغريدتك أولاً');
+      if (!text) return alert('اكتب التغريدة');
       await addDoc(collection(db, "tweets"), {
         user: currentUser,
         text: text,
@@ -150,20 +145,21 @@
         saves: 0
       });
       document.getElementById('tweetText').value = '';
-    });
+    };
 
-    // عرض التغريدات مع الأزرار
+    const tweetsContainer = document.getElementById('tweets');
     const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
-      const container = document.getElementById('tweets');
-      container.innerHTML = '';
+      tweetsContainer.innerHTML = '';
       snapshot.forEach(docSnap => {
         const t = docSnap.data();
         const id = docSnap.id;
-        container.innerHTML += `
+        tweetsContainer.innerHTML += `
           <div class="tweet">
-            <div class="tweet-user" onclick="window.location='profile.html?user=${t.user}'">@${t.user}</div>
-            <div>${t.text}</div>
+            <a href="profile.html?user=${t.user}" style="color:#3b82f6;text-decoration:none;">
+              <strong>${t.user}</strong>
+            </a>
+            <p>${t.text}</p>
             <div class="actions">
               <button onclick="likeTweet('${id}')">❤️ ${t.likes || 0}</button>
               <button onclick="retweetTweet('${id}')">🔁 ${t.retweets || 0}</button>
@@ -174,7 +170,6 @@
       });
     });
 
-    // الدوال لزيادة العداد
     window.likeTweet = async (id) => {
       await updateDoc(doc(db, "tweets", id), { likes: increment(1) });
     };
