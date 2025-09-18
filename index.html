@@ -49,21 +49,29 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.login = async () => {
-  const username = document.getElementById('username').value.trim();
-  const avatar = document.getElementById('avatar').value.trim() || '';
-  if(!username) return alert('اكتب اسم المستخدم');
+  const name = document.getElementById('usernameInput').value.trim();
+  if (!name) return alert('اكتب اسم المستخدم');
 
-  // تحقق من وجود المستخدم مسبقاً، إذا لم يوجد أنشئه
-  const userRef = doc(db, 'users', username);
+  currentUser = name;
+  localStorage.setItem('username', name);
+
+  // إنشاء مستند المستخدم إذا لم يكن موجود
+  const userRef = doc(db, 'users', currentUser);
   const userSnap = await getDoc(userRef);
-  if(!userSnap.exists()) {
-    await setDoc(userRef, { username, avatar, followers: [], following: [] });
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      username: currentUser,
+      avatar: "",
+      followers: [],
+      following: []
+    });
   }
 
-  localStorage.setItem('username', username);
-  localStorage.setItem('avatar', avatar);
-  window.location.href = 'home.html';
+  loginBox.style.display = 'none';
+  tweetBox.style.display = 'block';
+  currentUserSpan.textContent = name;
 };
+
 </script>
 </body>
 </html>
