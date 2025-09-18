@@ -228,7 +228,8 @@
         const id = docSnap.id;
         tweetsContainer.innerHTML += `
           <div class="tweet">
-            <strong>${t.user}</strong>
+            <a href="profile.html?user=${t.user}" style="color:#3b82f6;text-decoration:none;"><strong>${t.user}</strong></a>
+
             <p>${t.text}</p>
             ${t.image ? `<img src="${t.image}" alt="">` : ''}
             <div class="actions">
