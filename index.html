@@ -1,112 +1,140 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تويتر بسيط مع Firestore</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #0d1117;
-    color: #fff;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  header {
-    background: #161b22;
-    width: 100%;
-    padding: 15px;
-    text-align: center;
-    font-size: 1.2rem;
-    border-bottom: 1px solid #30363d;
-  }
-  #login {
-    margin: 20px;
-    text-align: center;
-  }
-  input, button, textarea {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
-  }
-  #tweets {
-    width: 90%;
-    max-width: 600px;
-  }
-  .tweet {
-    background: #161b22;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: 1px solid #30363d;
-  }
-  .tweet-user {
-    font-weight: bold;
-    color: #58a6ff;
-  }
-</style>
-<!-- Firebase -->
-<script type="module">
-  // استبدل هذه الإعدادات بإعدادات مشروعك من Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Future Twitter</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      width: 100%;
+      padding: 15px;
+      background: #1e293b;
+      text-align: center;
+      font-size: 24px;
+    }
+    #login-section, #tweet-section {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 10px;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: #3b82f6;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #tweets {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .tweet {
+      background: #1e293b;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    .tweet-user {
+      font-weight: bold;
+      color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <header>Future Twitter</header>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSy.....", // هنا بياناتك
-    authDomain: "yourproject.firebaseapp.com",
-    projectId: "yourproject",
-    storageBucket: "yourproject.appspot.com",
-    messagingSenderId: "....",
-    appId: "1:....",
-  };
+  <!-- تسجيل دخول بسيط -->
+  <div id="login-section">
+    <h3>تسجيل دخول</h3>
+    <input type="text" id="username" placeholder="اكتب اسمك هنا">
+    <button id="loginBtn">تسجيل</button>
+  </div>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  <!-- قسم التغريدات -->
+  <div id="tweet-section" style="display:none;">
+    <h3>أهلاً <span id="currentUser"></span> 👋</h3>
+    <textarea id="tweetText" placeholder="اكتب تغريدتك..."></textarea>
+    <button id="tweetBtn">غرد</button>
+  </div>
 
-  // نستخدم متغير عام ليحمل اسم المستخدم
-  let currentUser = localStorage.getItem('username') || '';
+  <!-- عرض التغريدات -->
+  <div id="tweets"></div>
 
-  window.onload = () => {
+  <!-- Firebase -->
+  <script type="module">
+    // إعدادات Firebase الخاصة بك
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "ضع الـ API KEY هنا",
+      authDomain: "ضع الـ authDomain هنا",
+      projectId: "ضع الـ projectId هنا",
+      storageBucket: "ضع الـ storageBucket هنا",
+      messagingSenderId: "ضع الـ messagingSenderId هنا",
+      appId: "ضع الـ appId هنا"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // تسجيل دخول بسيط
+    const loginSection = document.getElementById('login-section');
+    const tweetSection = document.getElementById('tweet-section');
+    const currentUserSpan = document.getElementById('currentUser');
+    let currentUser = localStorage.getItem('currentUser');
+
     if (currentUser) {
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('tweetBox').style.display = 'block';
+      loginSection.style.display = 'none';
+      tweetSection.style.display = 'block';
+      currentUserSpan.textContent = currentUser;
     }
-    loadTweets();
-  }
 
-  window.login = () => {
-    const name = document.getElementById('username').value.trim();
-    if (name) {
-      currentUser = name;
-      localStorage.setItem('username', name);
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('tweetBox').style.display = 'block';
-    }
-  }
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      if (username) {
+        currentUser = username;
+        localStorage.setItem('currentUser', username);
+        loginSection.style.display = 'none';
+        tweetSection.style.display = 'block';
+        currentUserSpan.textContent = currentUser;
+      }
+    });
 
-  async function postTweet() {
-    const text = document.getElementById('tweetInput').value.trim();
-    if (!text || !currentUser) return;
-    try {
+    // إضافة تغريدة
+    document.getElementById('tweetBtn').addEventListener('click', async () => {
+      const text = document.getElementById('tweetText').value.trim();
+      if (!text) return alert('اكتب تغريدتك أولاً');
       await addDoc(collection(db, "tweets"), {
         user: currentUser,
         text: text,
-        timestamp: new Date()
+        timestamp: serverTimestamp()
       });
-      document.getElementById('tweetInput').value = '';
-    } catch (e) {
-      console.error("Error adding tweet: ", e);
-    }
-  }
-  window.postTweet = postTweet;
+      document.getElementById('tweetText').value = '';
+    });
 
-  function loadTweets() {
-    const tweetsRef = collection(db, "tweets");
-    const q = query(tweetsRef, orderBy("timestamp", "desc"));
+    // عرض التغريدات من Firestore مباشرة
+    const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
       const container = document.getElementById('tweets');
       container.innerHTML = '';
@@ -120,26 +148,6 @@
         `;
       });
     });
-  }
-</script>
-</head>
-<body>
-
-<header>تويتر بسيط مع Firestore</header>
-
-<div id="login">
-  <h2>أدخل اسم المستخدم:</h2>
-  <input type="text" id="username" placeholder="اسم المستخدم">
-  <button onclick="login()">دخول</button>
-</div>
-
-<div id="tweetBox" style="display:none;">
-  <textarea id="tweetInput" rows="3" cols="40" placeholder="ماذا تريد أن تغرد؟"></textarea><br>
-  <button onclick="postTweet()">غرد</button>
-</div>
-
-<h2>التغريدات</h2>
-<div id="tweets"></div>
-
+  </script>
 </body>
 </html>
