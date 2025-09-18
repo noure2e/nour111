@@ -90,7 +90,6 @@
   <div class="tweet-box" id="tweetBox" style="display:none;">
     <h3>مرحبا <span id="currentUser"></span></h3>
     <textarea id="tweetText" rows="3" placeholder="اكتب تغريدتك هنا..."></textarea>
-    <!-- رفع الصورة -->
     <input type="file" id="tweetImage" accept="image/*" style="margin-top:10px;">
     <button onclick="postTweet()">غرد</button>
   </div>
@@ -99,7 +98,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
     const firebaseConfig = {
@@ -182,6 +181,43 @@
       if (imageInput) imageInput.value = '';
     };
 
+    // التفاعلات المرتبطة بالمستخدم
+    window.likeTweet = async (id) => {
+      const tweetRef = doc(db, "tweets", id);
+      const tweetSnap = await getDoc(tweetRef);
+      const data = tweetSnap.data();
+      if (!data.likedBy.includes(currentUser)) {
+        await updateDoc(tweetRef, {
+          likes: data.likes + 1,
+          likedBy: [...data.likedBy, currentUser]
+        });
+      }
+    };
+
+    window.retweetTweet = async (id) => {
+      const tweetRef = doc(db, "tweets", id);
+      const tweetSnap = await getDoc(tweetRef);
+      const data = tweetSnap.data();
+      if (!data.retweetedBy.includes(currentUser)) {
+        await updateDoc(tweetRef, {
+          retweets: data.retweets + 1,
+          retweetedBy: [...data.retweetedBy, currentUser]
+        });
+      }
+    };
+
+    window.saveTweet = async (id) => {
+      const tweetRef = doc(db, "tweets", id);
+      const tweetSnap = await getDoc(tweetRef);
+      const data = tweetSnap.data();
+      if (!data.savedBy.includes(currentUser)) {
+        await updateDoc(tweetRef, {
+          saves: data.saves + 1,
+          savedBy: [...data.savedBy, currentUser]
+        });
+      }
+    };
+
     // عرض التغريدات
     const tweetsContainer = document.getElementById('tweets');
     const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
@@ -195,6 +231,11 @@
             <strong>${t.user}</strong>
             <p>${t.text}</p>
             ${t.image ? `<img src="${t.image}" alt="">` : ''}
+            <div class="actions">
+              <button onclick="likeTweet('${id}')">❤️ ${t.likes || 0}</button>
+              <button onclick="retweetTweet('${id}')">🔁 ${t.retweets || 0}</button>
+              <button onclick="saveTweet('${id}')">🔖 ${t.saves || 0}</button>
+            </div>
           </div>
         `;
       });
