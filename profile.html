@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الملف الشخصي</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      width: 100%;
+      padding: 15px;
+      background: #1e293b;
+      text-align: center;
+      font-size: 24px;
+    }
+    .profile-info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1e293b;
+      border-radius: 10px;
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    .tweets {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .tweet {
+      background: #1e293b;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .actions button {
+      flex: 1;
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header><a href="index.html">⬅ العودة</a> الملف الشخصي</header>
+
+  <div class="profile-info">
+    <h2>الملف الشخصي: <span id="profileName"></span></h2>
+    <p>عدد التغريدات: <span id="tweetsCount">0</span></p>
+  </div>
+
+  <div class="tweets" id="tweets"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, query, where, onSnapshot, orderBy, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // نفس إعدادات Firebase تبعك
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+      authDomain: "future-twitter.firebaseapp.com",
+      projectId: "future-twitter",
+      storageBucket: "future-twitter.firebasestorage.app",
+      messagingSenderId: "603335040034",
+      appId: "1:603335040034:web:301ad6536582c15e1e7e7b",
+      measurementId: "G-F9MD8GLXK5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // استخراج اسم المستخدم من الرابط
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('user');
+    document.getElementById('profileName').textContent = username;
+
+    // جلب التغريدات الخاصة بالمستخدم
+    const q = query(collection(db, "tweets"), where("user", "==", username), orderBy("timestamp", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById('tweets');
+      container.innerHTML = '';
+      let count = 0;
+      snapshot.forEach(docSnap => {
+        const t = docSnap.data();
+        const id = docSnap.id;
+        count++;
+        container.innerHTML += `
+          <div class="tweet">
+            <div>${t.text}</div>
+            <div class="actions">
+              <button onclick="likeTweet('${id}')">❤️ ${t.likes || 0}</button>
+              <button onclick="retweetTweet('${id}')">🔁 ${t.retweets || 0}</button>
+              <button onclick="saveTweet('${id}')">🔖 ${t.saves || 0}</button>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('tweetsCount').textContent = count;
+    });
+
+    // نفس الدوال لزيادة العداد
+    window.likeTweet = async (id) => {
+      await updateDoc(doc(db, "tweets", id), { likes: increment(1) });
+    };
+    window.retweetTweet = async (id) => {
+      await updateDoc(doc(db, "tweets", id), { retweets: increment(1) });
+    };
+    window.saveTweet = async (id) => {
+      await updateDoc(doc(db, "tweets", id), { saves: increment(1) });
+    };
+  </script>
+</body>
+</html>
