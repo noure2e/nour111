@@ -57,11 +57,26 @@
     .tweet-user {
       font-weight: bold;
       color: #3b82f6;
+      cursor: pointer;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .actions button {
+      flex: 1;
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <header>Future Twitter</header>
+  <header>Future Twitter 🚀</header>
 
   <!-- تسجيل دخول بسيط -->
   <div id="login-section">
@@ -82,20 +97,19 @@
 
   <!-- Firebase -->
   <script type="module">
-    // إعدادات Firebase الخاصة بك
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
+    // ضع هنا إعدادات مشروعك في Firebase
     const firebaseConfig = {
-  apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
-  authDomain: "future-twitter.firebaseapp.com",
-  projectId: "future-twitter",
-  storageBucket: "future-twitter.firebasestorage.app",
-  messagingSenderId: "603335040034",
-  appId: "1:603335040034:web:301ad6536582c15e1e7e7b",
-  measurementId: "G-F9MD8GLXK5"
-};
-
+      apiKey: "AIzaSyCUpbsaQUWMBEM5ckCU1enlx0p4y8gEGNE",
+      authDomain: "future-twitter.firebaseapp.com",
+      projectId: "future-twitter",
+      storageBucket: "future-twitter.firebasestorage.app",
+      messagingSenderId: "603335040034",
+      appId: "1:603335040034:web:301ad6536582c15e1e7e7b",
+      measurementId: "G-F9MD8GLXK5"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -112,7 +126,7 @@
       currentUserSpan.textContent = currentUser;
     }
 
-    document.getElementById('loginBtn').addEventListener('click', () => {
+    document.getElementById('loginBtn').addEventListener('click', async () => {
       const username = document.getElementById('username').value.trim();
       if (username) {
         currentUser = username;
@@ -130,26 +144,46 @@
       await addDoc(collection(db, "tweets"), {
         user: currentUser,
         text: text,
-        timestamp: serverTimestamp()
+        timestamp: serverTimestamp(),
+        likes: 0,
+        retweets: 0,
+        saves: 0
       });
       document.getElementById('tweetText').value = '';
     });
 
-    // عرض التغريدات من Firestore مباشرة
+    // عرض التغريدات مع الأزرار
     const q = query(collection(db, "tweets"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
       const container = document.getElementById('tweets');
       container.innerHTML = '';
-      snapshot.forEach(doc => {
-        const t = doc.data();
+      snapshot.forEach(docSnap => {
+        const t = docSnap.data();
+        const id = docSnap.id;
         container.innerHTML += `
           <div class="tweet">
-            <div class="tweet-user">@${t.user}</div>
+            <div class="tweet-user" onclick="window.location='profile.html?user=${t.user}'">@${t.user}</div>
             <div>${t.text}</div>
+            <div class="actions">
+              <button onclick="likeTweet('${id}')">❤️ ${t.likes || 0}</button>
+              <button onclick="retweetTweet('${id}')">🔁 ${t.retweets || 0}</button>
+              <button onclick="saveTweet('${id}')">🔖 ${t.saves || 0}</button>
+            </div>
           </div>
         `;
       });
     });
+
+    // الدوال لزيادة العداد
+    window.likeTweet = async (id) => {
+      await updateDoc(doc(db, "tweets", id), { likes: increment(1) });
+    };
+    window.retweetTweet = async (id) => {
+      await updateDoc(doc(db, "tweets", id), { retweets: increment(1) });
+    };
+    window.saveTweet = async (id) => {
+      await updateDoc(doc(db, "tweets", id), { saves: increment(1) });
+    };
   </script>
 </body>
 </html>
